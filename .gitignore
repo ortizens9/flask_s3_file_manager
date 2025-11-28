@@ -1,0 +1,22 @@
+# Entorno Virtual Python
+aws-env/
+venv/
+
+# Archivos Python generados
+__pycache__/
+*.pyc
+*.pyo
+
+# Archivos de Testing
+.pytest_cache/
+htmlcov/
+.coverage
+
+# Archivos temporales
+*~
+
+# Archivos del sistema operativo
+.DS_Store # macOS
+
+# Archivos de Boto3/AWS
+.aws/

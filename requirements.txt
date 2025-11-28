@@ -1,0 +1,7 @@
+# Librerías principales
+boto3>=1.26.0
+Flask>=2.3.0
+
+# Librerías para testing
+pytest>=7.0.0
+moto[s3]>=4.1.0
