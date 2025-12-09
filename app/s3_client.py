@@ -1,6 +1,13 @@
 import boto3
+import logging
 from botocore.exceptions import ClientError
 import os
+
+
+class S3Error(Exception):
+    """Errores generales de S3."""
+
+    pass
 
 
 class S3Client:
@@ -16,8 +23,8 @@ class S3Client:
             bucket_names = [bucket["Name"] for bucket in response["Buckets"]]
             return bucket_names
         except ClientError as e:
-            print(f"Error al listar: {e} ")
-            return []
+            logging.error(f"Error al listar: {e}", exc_info=True)
+            raise S3Error(f"No se pudieron listar los buckets") from e
 
     def create_bucket(self, bucket_name):
         try:
@@ -27,10 +34,9 @@ class S3Client:
                     "LocationConstraint": self.s3.meta.region_name
                 },
             )
-            return True
         except ClientError as e:
-            print(f"Error al crear bucket: {e} ")
-            return False
+            logging.error(f"Error al crear bucket '{bucket_name}': {e}", exc_info=True)
+            raise S3Error(f"No se pudo crear el bucket '{bucket_name}'") from e
 
     # TODO: añadir parámetro opcional 'region' para poder crear buckets
     # en otra región que no sea la configurada en self.s3, y manejar
@@ -43,36 +49,57 @@ class S3Client:
             object_name = os.path.basename(file_path)
         try:
             self.s3.upload_file(Filename=file_path, Bucket=bucket_name, Key=object_name)
-            return True
+
         except ClientError as e:
-            print(
-                f"Error al subir el archivo {file_path} a {bucket_name}/{object_name}): {e} "
+            logging.error(
+                f"Error al subir el archivo '{file_path}' a '{bucket_name}'/'{object_name}': {e}",
+                exc_info=True,
             )
-            return False
+            raise S3Error(
+                f"No se pudo subir el archivo '{file_path}' a '{bucket_name}'"
+            ) from e
 
     def download_file(self, bucket_name, object_name, file_path):
         """Descarga un archivo del bucket"""
         try:
             self.s3.download_file(bucket_name, object_name, file_path)
-            return True
+
         except ClientError as e:
-            print(f"Error al descargar el archivo {object_name}: {e}")
-            return False
+            logging.error(
+                f"Error al descargar el archivo '{object_name}' del bucket '{bucket_name}' : {e}",
+                exc_info=True,
+            )
+            raise S3Error(
+                f"No se pudo descargar el archivo '{object_name}' del bucket '{bucket_name}'"
+            ) from e
 
     def delete_object(self, bucket_name, object_name):
         """Elimina un objeto del bucket S3."""
         try:
             self.s3.delete_object(Bucket=bucket_name, Key=object_name)
-            return True
+
         except ClientError as e:
-            print(f"Error al eliminar el archivo {object_name}: {e}")
-            return False
+            logging.error(
+                f"Error al eliminar el archivo '{object_name}' del bucket '{bucket_name}': {e}",
+                exc_info=True,
+            )
+            raise S3Error(
+                f"No se pudo borrar el archivo '{object_name}' del bucket '{bucket_name}'"
+            ) from e
 
     def list_objects(self, bucket_name):
         """Lista los objetos en un bucket S3."""
         try:
-            response = self.s3.list_objects_v2(Bucket=bucket_name)
-            object_names = [object["Key"] for object in response.get("Contents", [])]
-            return object_names
+            paginator = self.s3.get_paginator("list_objects_v2")
+            all_keys = []
+            for page in paginator.paginate(Bucket=bucket_name):
+                for obj in page.get("Contents", []):
+                    all_keys.append(obj["Key"])
+            return all_keys
         except ClientError as e:
-            return []
+            logging.error(
+                f"Error al listar los objetos en el bucket '{bucket_name}': {e}"
+            )
+            raise S3Error(
+                f"No se pueden listar los objetos en el bucket '{bucket_name}'"
+            ) from e
