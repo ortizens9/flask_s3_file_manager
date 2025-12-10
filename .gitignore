@@ -20,3 +20,7 @@ htmlcov/
 
 # Archivos de Boto3/AWS
 .aws/
+
+#Carpeta uploads para pruebas locales
+uploads/*
+!uploads/.gitignore
