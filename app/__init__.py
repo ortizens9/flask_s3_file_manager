@@ -1,8 +1,15 @@
 from flask import Flask, request, render_template
 import logging
+import uuid
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
+
+ALLOWED_EXTENSIONS = {"txt", "pdf", "jpg", "png", "gif"}
+
+
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 @app.route("/")
@@ -21,13 +28,20 @@ def upload():
         f = request.files.get("the_file")
         if f and f.filename != "":
             secure_name = secure_filename(f.filename)
-            path = "uploads/" + secure_name
-            f.save(path)
-            message = f"File uploaded and saved: {secure_name}"
-            return render_template("upload.html", message=message)
+            if not allowed_file(secure_name):
+                logging.warning("Object format not allowed")
+                return render_template(
+                    "upload.html", message="Error: Extension not allowed"
+                )
+            else:
+                unique_name = f"{uuid.uuid4().hex}_{secure_name}"
+                path = "uploads/" + unique_name
+                f.save(path)
+                message = f"File uploaded and saved: {unique_name}"
+                return render_template("upload.html", message=message)
         else:
             logging.warning("Attempted to upload without providing a file")
-            return "Error: Object not uploaded"
+            return render_template("upload.html", message="Error: Object not uploaded")
 
 
 @app.route("/download")
