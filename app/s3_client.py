@@ -26,22 +26,24 @@ class S3Client:
             logging.error(f"Error al listar: {e}", exc_info=True)
             raise S3Error(f"No se pudieron listar los buckets") from e
 
-    def create_bucket(self, bucket_name):
+    def create_bucket(self, bucket_name, region=None):
+        if region == None:
+            region = self.s3.meta.region_name
         try:
-            self.s3.create_bucket(
-                Bucket=bucket_name,
-                CreateBucketConfiguration={
-                    "LocationConstraint": self.s3.meta.region_name
-                },
-            )
+            if region == "us-east-1":
+                self.s3.create_bucket(Bucket=bucket_name)
+            else:
+                self.s3.create_bucket(
+                    Bucket=bucket_name,
+                    CreateBucketConfiguration={"LocationConstraint": region},
+                )
         except ClientError as e:
-            logging.error(f"Error al crear bucket '{bucket_name}': {e}", exc_info=True)
+            logging.error(
+                f"Error al crear bucket '{bucket_name}' en region '{region}': {e}",
+                exc_info=True,
+            )
             raise S3Error(f"No se pudo crear el bucket '{bucket_name}'") from e
 
-    # TODO: añadir parámetro opcional 'region' para poder crear buckets
-    # en otra región que no sea la configurada en self.s3, y manejar
-    # la excepción IllegalLocationConstraintException si la región no coincide.
-    # Desde aquí import os.
     def upload_file(self, file_path, bucket_name, object_name=None):
         """Sube un archivo a un bucket S3."""
         # Si object_name no se proporciona, usa el nombre del archivo local.
