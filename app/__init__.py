@@ -2,10 +2,22 @@ from flask import Flask, request, render_template
 import logging
 import uuid
 from werkzeug.utils import secure_filename
+from werkzeug.exceptions import RequestEntityTooLarge
 
 app = Flask(__name__)
+app.config["MAX_CONTENT_LENGTH"] = 3 * 1024 * 1024  # 3MB max file size
 
 ALLOWED_EXTENSIONS = {"txt", "pdf", "jpg", "png", "gif"}
+
+
+@app.errorhandler(RequestEntityTooLarge)
+def handle_file_too_large(e):
+    return (
+        render_template(
+            "upload.html", message="The file is too large. Maximum size is 3MB."
+        ),
+        413,
+    )
 
 
 def allowed_file(filename):
