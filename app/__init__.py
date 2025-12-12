@@ -7,4 +7,5 @@ def create_app():
     app.config["MAX_CONTENT_LENGTH"] = 3 * 1024 * 1024  # 3MB max file size
     # Registrar blueprint
     app.register_blueprint(routes)
+    app.config["DEFAULT_BUCKET"] = "file-manager-s3-bucket-default-daniel-ortiz"
     return app

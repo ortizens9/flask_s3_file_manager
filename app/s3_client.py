@@ -1,6 +1,7 @@
 import boto3
 import logging
 from botocore.exceptions import ClientError
+from werkzeug.utils import secure_filename
 import os
 
 
@@ -37,6 +38,7 @@ class S3Client:
                     Bucket=bucket_name,
                     CreateBucketConfiguration={"LocationConstraint": region},
                 )
+            return True
         except ClientError as e:
             logging.error(
                 f"Error al crear bucket '{bucket_name}' en region '{region}': {e}",
@@ -59,6 +61,19 @@ class S3Client:
             )
             raise S3Error(
                 f"No se pudo subir el archivo '{file_path}' a '{bucket_name}'"
+            ) from e
+
+    def upload_fileobj(self, fileobj, Bucket, Key):
+        object_name = secure_filename(Key)
+        try:
+            self.s3.upload_fileobj(fileobj, Bucket=Bucket, Key=object_name)
+        except ClientError as e:
+            logging.error(
+                f"Error al subir el archivo '{object_name}' a '{Bucket}'/'{object_name}': {e}",
+                exc_info=True,
+            )
+            raise S3Error(
+                f"No se pudo subir el archivo '{object_name}' a '{Bucket}'"
             ) from e
 
     def download_file(self, bucket_name, object_name, file_path):

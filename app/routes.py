@@ -1,10 +1,12 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, current_app
 import logging
 import uuid
 from werkzeug.utils import secure_filename
 from werkzeug.exceptions import RequestEntityTooLarge
+from .s3_client import S3Client
 
 routes = Blueprint("routes", __name__)
+s3 = S3Client()
 
 ALLOWED_EXTENSIONS = {"txt", "pdf", "jpg", "png", "gif"}
 
@@ -46,8 +48,8 @@ def upload():
                 )
             else:
                 unique_name = f"{uuid.uuid4().hex}_{secure_name}"
-                path = "uploads/" + unique_name
-                f.save(path)
+                bucket = current_app.config["DEFAULT_BUCKET"]
+                s3.upload_fileobj(fileobj=f, Bucket=bucket, Key=unique_name)
                 message = f"File uploaded and saved: {unique_name}"
                 return render_template("upload.html", message=message)
         else:
