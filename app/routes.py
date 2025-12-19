@@ -1,14 +1,11 @@
-from flask import Blueprint, render_template, request, current_app
-import logging
-import uuid
-from werkzeug.utils import secure_filename
+from flask import Blueprint, render_template, request, current_app, send_file
 from werkzeug.exceptions import RequestEntityTooLarge
-from .s3_client import S3Client
+from s3_service import download_file, upload_file, S3ServiceError
+import os
 
 routes = Blueprint("routes", __name__)
-s3 = S3Client()
 
-ALLOWED_EXTENSIONS = {"txt", "pdf", "jpg", "png", "gif"}
+# HTTP, depende de Flask
 
 
 @routes.errorhandler(RequestEntityTooLarge)
@@ -21,10 +18,6 @@ def handle_file_too_large(e):
     )
 
 
-def allowed_file(filename):
-    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
 @routes.route("/")
 def index():
     return render_template("index.html")
@@ -34,32 +27,34 @@ def index():
 # post para enviar los datos al servidor, en este caso para subir
 @routes.route("/upload", methods=["GET", "POST"])
 def upload():
+    bucket = current_app.config["DEFAULT_BUCKET"]
     if request.method == "GET":
         return render_template("upload.html")
     elif request.method == "POST":
-        message = ""
         f = request.files.get("the_file")
         if f and f.filename != "":
-            secure_name = secure_filename(f.filename)
-            if not allowed_file(secure_name):
-                logging.warning("Object format not allowed")
+            try:
+                unique_name = upload_file(f, bucket)
                 return render_template(
-                    "upload.html", message="Error: Extension not allowed"
+                    "upload.html", message=f"File uploaded successfully: {unique_name}"
                 )
-            else:
-                unique_name = f"{uuid.uuid4().hex}_{secure_name}"
-                bucket = current_app.config["DEFAULT_BUCKET"]
-                s3.upload_fileobj(fileobj=f, Bucket=bucket, Key=unique_name)
-                message = f"File uploaded and saved: {unique_name}"
-                return render_template("upload.html", message=message)
+            except S3ServiceError as e:
+                return render_template("upload.html", message=str(e))
         else:
-            logging.warning("Attempted to upload without providing a file")
             return render_template("upload.html", message="Error: Object not uploaded")
 
 
-@routes.route("/download")
-def download():
-    return "<p>Ruta para descargar objeto</p>"
+@routes.route("/download/<object_name>")
+def download(object_name):
+    bucket = current_app.config["DEFAULT_BUCKET"]
+    os.makedirs("uploads", exist_ok=True)
+    file_path = os.path.join("uploads", object_name)
+    # Para pulir necesitamos crear una función para borrar los archivos temporales.
+    try:
+        download_file(bucket, object_name, file_path)
+        return send_file(file_path, as_attachment=True)
+    except S3ServiceError as e:
+        return render_template("download.html", message=str(e))
 
 
 @routes.route("/delete")

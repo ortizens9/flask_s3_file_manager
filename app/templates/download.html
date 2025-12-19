@@ -14,13 +14,11 @@
 
 <body>
     <a href="/">Back to Home</a>
-    <h1>Upload object to S3</h1>
-    <form method="post" enctype="multipart/form-data">
-        <input type="file" name="the_file">
-        <input type="submit" value="Upload it!">
-    </form>
+    <h1>Download object from the Bucket</h1>
     {% if message %}
-    <p>{{ message }}</p>
+    <p>{{ message }} </p>
+    {% else %}
+    <p>Select an object to download (coming soon...)</p>
     {% endif %}
 </body>
 
