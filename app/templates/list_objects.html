@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>---S3 File Manager---</title>
+    <style>
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="/">Back to Home</a>
+    <h1>Object list in S3 bucket</h1>
+    {% if objects %}
+    <ul>
+        {% for obj in objects %}
+        <li>{{obj}}</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No objects in bucket</p>
+    {% endif %}
+</body>
+
+</html>

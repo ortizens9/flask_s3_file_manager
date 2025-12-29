@@ -14,11 +14,15 @@
 
 <body>
     <a href="/">Back to Home</a>
-    <h1>Download object from the Bucket</h1>
-    {% if message %}
-    <p>{{ message }} </p>
+    <h1>Download objects from the Bucket</h1>
+    {% if objects %}
+    <ul>
+        {% for obj in objects %}
+        <li><a href="{{ url_for('routes.download', object_name=obj) }}">{{ obj }}</a></li>
+        {% endfor %}
+    </ul>
     {% else %}
-    <p>Select an object to download (coming soon...)</p>
+    <p>No objects in bucket</p>
     {% endif %}
 </body>
 

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>---S3 File Manager---</title>
+    <style>
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="/">Back to Home</a>
+    <h1>Object list in default S3 Bucket</h1>
+    {% if objects %}
+    <ul>
+        {% for obj in objects %}
+        <li>{{obj}}</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No objects in bucket</p>
+    {% endif %}
+
+    <hr>
+
+    <h2>Delete object from the Bucket</h2>
+    <form method="POST">
+        <input type="text" name="object_name" placeholder="Enter object name">
+        <input type="submit" value="Delete">
+    </form>
+    {% if message %}
+    <p>{{ message }}</p>
+    {% endif %}
+</body>
+
+</html>
