@@ -14,7 +14,7 @@
 
 <body>
     <a href="/">Back to Home</a>
-    <h1>S3 Buckets in this account</h1>
+    <h1>S3 buckets in this account</h1>
     {% if buckets %}
     <ul>
         {% for bName in buckets %}
@@ -29,7 +29,7 @@
 
     <h2>Create new bucket</h2>
     <form method="POST">
-        <input type="text" name="nbucketname" placeholder="Enter bucket name...">
+        <input type="text" name="bucket_name" placeholder="Enter bucket name...">
         <input type="submit" value="Create">
     </form>
     {% if message %}

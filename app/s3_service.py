@@ -70,3 +70,12 @@ def delete_file(bucket_name, object_name):
     except Exception as e:
         logging.error("Error deleting object", exc_info=True)
         raise S3ServiceError(f"Failed deleting object") from e
+
+
+def new_bucket(bucket_name):
+    s3 = S3Client()
+    try:
+        s3.create_bucket(bucket_name)
+    except Exception as e:
+        logging.error("Error creating bucket", exc_info=True)
+        raise S3ServiceError(f"Failed creating new Bucket") from e

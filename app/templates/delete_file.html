@@ -14,7 +14,7 @@
 
 <body>
     <a href="/">Back to Home</a>
-    <h1>Object list in default S3 Bucket</h1>
+    <h1>Object list in default S3 bucket</h1>
     {% if objects %}
     <ul>
         {% for obj in objects %}
@@ -27,9 +27,9 @@
 
     <hr>
 
-    <h2>Delete object from the Bucket</h2>
+    <h2>Delete object from "the bucket"</h2>
     <form method="POST">
-        <input type="text" name="object_name" placeholder="Enter object name">
+        <input type="text" name="object_name" placeholder="Enter object name...">
         <input type="submit" value="Delete">
     </form>
     {% if message %}
