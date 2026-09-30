@@ -1,9 +1,14 @@
+import os
 from app.s3_client import S3Client
 
 
 def main():
     s3 = S3Client()
-    bucket_name = "test-s3-manager-daniel-ortiz-2025"
+    bucket_name = os.environ.get(
+        "S3_BUCKET_NAME", 
+        "terraform-file-manager-default-s3bucket-daniel-2026"
+    )
+
     success = s3.create_bucket(bucket_name)
     print("Bucket creado:", success)
     file_path = "prueba.txt"

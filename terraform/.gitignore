@@ -1,0 +1,11 @@
+# Archivos de estado local de Terraform (contienen info sensible)
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+
+# Carpeta de inicialización de plugins
+.terraform/
+.terraform.lock.hcl
+
+# Variables con credenciales privadas si las hubiera
+*.tfvars
