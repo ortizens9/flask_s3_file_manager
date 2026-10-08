@@ -18,4 +18,4 @@ EXPOSE 5000
 
 #Define el  comando que se ejecutará dentro del contenedor cuando este se ponga en marcha.
 #Es una especie de instrucción de arranque.
-CMD ["flask", "--app", "app.main:app", "run", "--host=0.0.0.0", "--port=5000"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app.main:app"]
