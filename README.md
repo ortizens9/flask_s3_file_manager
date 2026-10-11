@@ -11,10 +11,10 @@ Esta es la documentación técnica completa del ciclo de vida de migración y au
 
 [Imagen]
 
-**Backend:** Python, Flask, Gunicorn, 'boto3'.
-**Contenedores:** Docker, AWS ECR.
-**Infraestructura como Código (IaC):** Terraform
-**Orquestación y Red** AWS ECS Fargate, VPC, subredes, grupos de seguridad, S3, IAM.
+* **Backend:** Python, Flask, Gunicorn, 'boto3'.
+* **Contenedores:** Docker, AWS ECR.
+* **Infraestructura como Código (IaC):** Terraform
+* **Orquestación y Red** AWS ECS Fargate, VPC, subredes, grupos de seguridad, S3, IAM.
 
 ## Comandos rápidos de despliegue
 
