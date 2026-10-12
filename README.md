@@ -53,11 +53,11 @@ terraform destroy
 ## Parte 1: Contenedorización de nuestro gestor de S3
 Buenas tardes a todos. Después de un tiempo liado con temas de AWS, retomo el blog para rescatar el gestor de S3 con boto3 que creé y que esta vez lo contenedorizaremos (lo convertiremos en un contenedor de Docker).
 
-[Imagen01](images/01.png)
+![Imagen01](images/01.png)
 
 Como hemos cambiado varias veces de SO me aseguro de que el gestor continua funcionando correctamente. En mi carpeta de Proyectos he clonado desde mi cuenta de Github el [código](https://github.com/ortizens9/flask_s3_file_manager) que escribí.
 
-[Imagen02](images/02.png)
+![Imagen02](images/02.png)
 
 Activamos el entorno, actualizamos las dependencias con el archivo requirements.txt y la ponemos en marcha con:
 ```bash
@@ -65,23 +65,23 @@ flask run --host=0.0.0.0 --port=5000
 ```
 Nos muestra dos IP, depende desde donde la estemos ejecutando usamos una u otra. En el caso de estar probándola en la misma máquina, usaremos la que dice _127.0.0.1:5000_ (localhost) y si la ejecutamos en un servidor remoto (accediendo vía SSH), accedemos desde el navegador con la IP de la máquina (ej. _192.168.X.X:5000_).
 
-[Imagen03](images/03.png)
+![Imagen03](images/03.png)
 
 En la imagen muestro la disposición de la estructura interna de la app con su árbol de directorios.
 
-[Imagen04](images/04.png)
+![Imagen04](images/04.png)
 
 Pasamos a crear el Dockerfile, que es un documento de texto que se utiliza para hacer una imagen de contenedor; hacemos un _nano Dockerfile_. Y el contenido quedaría de la siguiente manera (he dejado comentarios explicando el funcionamiento interno).
 
-[Imagen05](images/05.png)
+![Imagen05](images/05.png)
 
 Construimos la imagen del contenedor:
 
-[Imagen06](images/06.png)
+![Imagen06](images/06.png)
 
 Para verificar si se ha creado con éxito escribimos _docker images_. Ahí deberíamos ver la imagen con el nombre _flask-s3-app_. Para poner a prueba el contenedor, arrancamos uno de prueba:
 
-[Imagen07](images/07.png)
+![Imagen07](images/07.png)
 
 Esta solicitud en el navegador web se puede hacer tanto con _127.0.0.1_ como por _localhost_. Una vez verificado, lo paramos y eliminamos con:
 ```bash
