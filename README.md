@@ -47,6 +47,8 @@ aws ec2 describe-network-interfaces --network-interface-ids <ENI_ID> --query "Ne
 
 ## Limpieza del entorno
 ```bash
+terraform destroy
+```
 
 ## Parte 1: Contenedorización de nuestro gestor de S3
 Buenas tardes a todos. Después de un tiempo liado con temas de AWS, retomo el blog para rescatar el gestor de S3 con boto3 que creé y que esta vez lo contenedorizaremos (lo convertiremos en un contenedor de Docker).
