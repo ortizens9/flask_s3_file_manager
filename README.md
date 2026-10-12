@@ -146,7 +146,7 @@ En esa orden:
 * **'-v ~/.aws:/root/.aws:ro'**: Montamos la carpeta local de las credenciales de AWS en el contenedor en modo lectura (para pruebas locales).
 * **'-p 5000:5000'**: Vinculamos el puerto 5000 del sistema con el contenedor.
 * **'flask-s3-app:latest'**: Definimos la imagen de Docker que utilizamos.
-![Imagen18](images/17.png)
+<img src="images/17.png" width="700px" alt="imagen17">
 Haré una serie de acciones con el bucket para asegurarme de que todo está en correcto funcionamiento.
 ![Imagen19](images/18.png)
 ![Imagen20](images/19.png)
