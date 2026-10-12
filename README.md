@@ -101,7 +101,7 @@ Parte 2:
 
 En esta segunda parte de la serie nos acercaremos al objetivo, que es **automatizar el despliegue con IaC** (Infraestructura como Código).
 
-![Imagen08](images/08.png)
+<img src="images/08.png" width="600px" alt="imagen08">
 
 Para empezar, instalamos Terraform desde sus [repositorios oficiales](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli
 ).
