@@ -10,7 +10,7 @@ Esta es la documentación técnica completa del ciclo de vida de migración y au
 ## Arquitectura y tecnologías
 
 
-<img src="images/esquema_proyecto.png" width="900px" alt="estructura">
+<img src="images/esquema_proyecto.png" width="800px" alt="estructura">
 
 * **Backend:** Python, Flask, Gunicorn, 'boto3'.
 * **Contenedores:** Docker, AWS ECR.
