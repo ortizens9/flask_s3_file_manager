@@ -164,10 +164,10 @@ Haré una serie de acciones con el bucket para asegurarme de que todo está en c
 ![Imagen26](images/26.png)
 
 Como podemos ver en las capturas, ya tenemos el Gestor adaptado para IaC y funcionando correctamente.
-El siguiente paso será alojar esta imagen de Docker en [Amazon ECR](https://aws.amazon.com/es/ecr/) (Elastic Container Registry) para poder desplegarla en una estrategia 100% automatizada en la nube de AWS.
+El siguiente paso será alojar esta imagen de Docker en [Amazon ECR](https://aws.amazon.com/es/ecr/) (Elastic Container Registry) **para poder desplegarla en una estrategia 100% automatizada** en la nube de AWS.
 
 ## Parte 3: Publicación y alojamiento de la imagen de Docker en Amazon ECR
-El objetivo de hoy es pasar la imagen de Docker a Amazon ECR con el fin de desplegar nuestra aplicación en la nube de AWS utilizando IaC de manera automática.
+El objetivo de hoy es **pasar la imagen de Docker a Amazon ECR** con el fin de desplegar nuestra aplicación en la nube de AWS utilizando IaC de manera automática.
 
 <img src="images/27.png" width="400px" alt="imagen27">
 
