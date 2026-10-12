@@ -54,11 +54,11 @@ terraform destroy
 ## Parte 1: Contenedorización de nuestro gestor de S3
 Buenas tardes a todos. Después de un tiempo liado con temas de AWS, retomo el blog para rescatar el gestor de S3 con boto3 que creé y que esta vez lo contenedorizaremos (lo convertiremos en un contenedor de Docker).
 
-![Imagen01](images/01.png)
+<img src="images/01.png" width="400px" alt="imagen01">
 
 Como hemos cambiado varias veces de SO me aseguro de que el gestor continua funcionando correctamente. En mi carpeta de Proyectos he clonado desde mi cuenta de Github el [código](https://github.com/ortizens9/flask_s3_file_manager) que escribí.
 
-![Imagen02](images/02.png)
+<img src="images/02.png" width="700px" alt="imagen02">
 
 Activamos el entorno, actualizamos las dependencias con el archivo requirements.txt y la ponemos en marcha con:
 ```bash
