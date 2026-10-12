@@ -97,6 +97,71 @@ Aunque haya maneras de editar el archivo _.gitignore_ para no subir estas creden
 Dejo un [enlace](https://docs.docker.com/get-started/docker-concepts/building-images/writing-a-dockerfile/) que me ha servido para crear el Dockerfile.
 
 ## Parte 2: Paso del gestor de S3 a IaC con Terraform
+Parte 2:
+
+En esta segunda parte de la serie nos acercaremos al objetivo, que es **automatizar el despliegue con IaC** (Infraestructura como Código).
+
+![Imagen08](images/08.png)
+
+Para empezar, instalamos Terraform desde sus [repositorios oficiales](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli
+).
+Para estructurar correctamente el código de _manera limpia_, dividimos la configuración en tres archivos principales dentro de una misma carpeta: 'providers.tf', 'main.tf' y 'variables.tf'.
+
+* **'providers.tf'**, para la conexión. Definiendo con quién habla Terraform (en este caso, AWS) y qué versión del plugin tiene que descargar.
+* **'variables.tf'**, para las entradas. Definiendo parámetros que pueden cambiar como son la región, los nombres, las dimensiones de la máquina. Valores que harían difícil el despliegue si se quedaran fijos (hardcoded).
+* **'main.tf'**, los recursos: Donde se encuentra la infraestructura real a crear: servidores, buckets, redes, BDs.
+
+Separarlo de esta forma nos da la posibilidad de reutilizar la misma infraestructura en otros entornos o con diferentes nombres de bucket. Es más fácil de mantener, de la misma manera que cuando dividimos el código del gestor de S3. Aunque sea posible tenerlo todo en el mismo archivo, no es nada recomendable de cara al futuro. En proyectos más grandes, todavía se podría separar aún más.
+
+Ubicados en la raíz del proyecto, generamos la carpeta 'terraform' y entramos en ella y le añadimos los archivos necesarios, que la estructura quedará así:
+
+![Imagen09](images/09.png)
+![Imagen10](images/10.png)
+![Imagen11](images/11.png)
+
+Después de definir los tres archivos, la estructura queda así:
+![Imagen12](images/12.png)
+![Imagen13](images/13.png)
+![Imagen14](images/14.png)
+![Imagen15](images/15.png)
+![Imagen16](images/16.png)
+
+He tenido que modificar el código del gestor de S3 para **orientarlo a un usuario final** y no tanto a un administrador root que lo gestiona todo. Así que le he dejado funciones de subir, borrar, listar y actualizar archivos nada más.
+He adaptado la aplicación al nuevo bucket que hemos creado expresamente con Terraform para este proyecto, llamado 'terraform-file-manager-default-s3bucket-daniel-2026'. He limpiado también la parte de Flask eliminando las rutas de crear y listar buckets que teníamos en la versión anterior.
+
+**Un consejo**: Tenemos que tener cuidado a la hora de cambiar todas las partes. Si se queda alguna línea antigua, seguirá conectándose al bucket antiguo. Un comando que me fue de utilidad para encontrar referencias fue: 'grep -rn' 'app.config' o buscar términos como 'test-s3' o 'file-manager' en la raíz del gestor.
+
+Uno de los puntos fuertes del proyecto del Gestor es que al tenerlo todo bien separado (de manera modular) no me costó identificar qué tenía que cambiar. Os dejaré el resultado de [esta versión](https://github.com/ortizens9/flask_s3_file_manager/tree/feature/terraform-aws-migration) en una rama del repositorio de mi GitHub por si os es de utilidad.
+
+Con el gestor actualizado, volvemos a crear la imagen de Docker como hicimos en la **Parte 1**.
+
+![Imagen17](images/17.png)
+
+Para probar la imagen (y como tengo el [AWS CLI](https://aws.amazon.com/es/cli/) instalado y configurado), le podemos compartir los permisos que tiene nuestro sistema local para que pueda realizar las operaciones en S3 (subir, listar, borrar...):
+```bash
+docker run --rm --env-file .env   -v ~/.aws:/root/.aws:ro   -p 5000:5000   flask-s3-app:latest
+```
+En esa orden:
+* **'--rm'**: Indica que se borre el contenedor una vez parado de manera automática.
+* **'--env-file .env'**: Especificamos donde se encuentra el archivo .env, donde se encuentran las variables de entorno.
+* **'-v ~/.aws:/root/.aws:ro'**: Montamos la carpeta local de las credenciales de AWS en el contenedor en modo lectura (para pruebas locales).
+* **'-p 5000:5000'**: Vinculamos el puerto 5000 del sistema con el contenedor.
+* **'flask-s3-app:latest'**: Definimos la imagen de Docker que utilizamos.
+![Imagen18](images/18.png)
+Haré una serie de acciones con el bucket para asegurarme de que todo está en correcto funcionamiento.
+![Imagen19](images/19.png)
+![Imagen20](images/20.png)
+![Imagen21](images/21.png)
+![Imagen22](images/22.png)
+![Imagen23](images/23.png)
+![Imagen24](images/24.png)
+![Imagen25](images/25.png)
+![Imagen26](images/26.png)
+![Imagen27](images/27.png)
+
+Como podemos ver en las capturas, ya tenemos el Gestor adaptado para IaC y funcionando correctamente.
+El siguiente paso será alojar esta imagen de Docker en [Amazon ECR](https://aws.amazon.com/es/ecr/) (Elastic Container Registry) para poder desplegarla en una estrategia 100% automatizada en la nube de AWS.
+
 ## Parte 3: Publicación y alojamiento de la imagen de Docker en Amazon ECR
 ## Parte 4: Configuración de IAM y definición de las tareas en ECS
 ## Parte 5: Despliegue del servicio en Fargate, redes y resolución de problemas
