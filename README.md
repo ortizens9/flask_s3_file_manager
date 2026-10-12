@@ -134,7 +134,7 @@ Uno de los puntos fuertes del proyecto del Gestor es que al tenerlo todo bien se
 
 Con el gestor actualizado, volvemos a crear la imagen de Docker como hicimos en la **Parte 1**.
 
-![Imagen17](images/16.png)
+![Imagen16](images/16.png)
 
 Para probar la imagen (y como tengo el [AWS CLI](https://aws.amazon.com/es/cli/) instalado y configurado), le podemos compartir los permisos que tiene nuestro sistema local para que pueda realizar las operaciones en S3 (subir, listar, borrar...):
 ```bash
@@ -149,15 +149,15 @@ En esa orden:
 <img src="images/17.png" width="700px" alt="imagen17">
 
 Haré una serie de acciones con el bucket para asegurarme de que todo está en correcto funcionamiento.
-![Imagen19](images/18.png)
-![Imagen20](images/19.png)
-![Imagen21](images/20.png)
-![Imagen22](images/21.png)
-![Imagen23](images/22.png)
-![Imagen24](images/23.png)
-![Imagen25](images/24.png)
-![Imagen26](images/25.png)
-![Imagen27](images/26.png)
+![Imagen18](images/18.png)
+![Imagen19](images/19.png)
+![Imagen20](images/20.png)
+![Imagen21](images/21.png)
+![Imagen22](images/22.png)
+<img src="images/23.png" width="500px" alt="imagen23">
+![Imagen24](images/24.png)
+![Imagen25](images/25.png)
+![Imagen26](images/26.png)
 
 Como podemos ver en las capturas, ya tenemos el Gestor adaptado para IaC y funcionando correctamente.
 El siguiente paso será alojar esta imagen de Docker en [Amazon ECR](https://aws.amazon.com/es/ecr/) (Elastic Container Registry) para poder desplegarla en una estrategia 100% automatizada en la nube de AWS.
