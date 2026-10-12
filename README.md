@@ -66,23 +66,23 @@ flask run --host=0.0.0.0 --port=5000
 ```
 Nos muestra dos IP, depende desde donde la estemos ejecutando usamos una u otra. En el caso de estar probándola en la misma máquina, usaremos la que dice _127.0.0.1:5000_ (localhost) y si la ejecutamos en un servidor remoto (accediendo vía SSH), accedemos desde el navegador con la IP de la máquina (ej. _192.168.X.X:5000_).
 
-![Imagen03](images/03.png)
+<img src="images/03.png" width="700px" alt="imagen03">
 
 En la imagen muestro la disposición de la estructura interna de la app con su árbol de directorios.
 
-![Imagen04](images/04.png)
+<img src="images/04.png" width="700px" alt="imagen04">
 
 Pasamos a crear el Dockerfile, que es un documento de texto que se utiliza para hacer una imagen de contenedor; hacemos un _nano Dockerfile_. Y el contenido quedaría de la siguiente manera (he dejado comentarios explicando el funcionamiento interno).
 
-![Imagen05](images/05.png)
+<img src="images/05.png" width="700px" alt="imagen05">
 
 Construimos la imagen del contenedor:
 
-![Imagen06](images/06.png)
+<img src="images/06.png" width="700px" alt="imagen06">
 
 Para verificar si se ha creado con éxito escribimos _docker images_. Ahí deberíamos ver la imagen con el nombre _flask-s3-app_. Para poner a prueba el contenedor, arrancamos uno de prueba:
 
-![Imagen07](images/07.png)
+<img src="images/07.png" width="700px" alt="imagen07">
 
 Esta solicitud en el navegador web se puede hacer tanto con _127.0.0.1_ como por _localhost_. Una vez verificado, lo paramos y eliminamos con:
 ```bash
