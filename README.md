@@ -157,8 +157,10 @@ Haré una serie de acciones con el bucket para asegurarme de que todo está en c
 ![Imagen21](images/21.png)
 ![Imagen22](images/22.png)
 <img src="images/23.png" width="700px" alt="imagen23">
+
 ![Imagen24](images/24.png)
 <img src="images/25.png" width="700px" alt="imagen25">
+
 ![Imagen26](images/26.png)
 
 Como podemos ver en las capturas, ya tenemos el Gestor adaptado para IaC y funcionando correctamente.
@@ -247,6 +249,7 @@ Seguido del output que nos generará el registro ECR al desplegarlo.
 Dejo los enlaces de donde he sacado la información. [A](https://spacelift.io/blog/terraform-ecr) y [B](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_repository).
 
 Después de escribirlo, ejecutamos la instrucción: 'terraform plan'.
+
 
 <img src="images/30.png" width="700px" alt="imagen30">
 
