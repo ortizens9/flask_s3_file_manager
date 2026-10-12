@@ -124,7 +124,6 @@ Después de definir los tres archivos, la estructura queda así:
 ![Imagen13](images/13.png)
 ![Imagen14](images/14.png)
 ![Imagen15](images/15.png)
-![Imagen16](images/16.png)
 
 He tenido que modificar el código del gestor de S3 para **orientarlo a un usuario final** y no tanto a un administrador root que lo gestiona todo. Así que le he dejado funciones de subir, borrar, listar y actualizar archivos nada más.
 He adaptado la aplicación al nuevo bucket que hemos creado expresamente con Terraform para este proyecto, llamado 'terraform-file-manager-default-s3bucket-daniel-2026'. He limpiado también la parte de Flask eliminando las rutas de crear y listar buckets que teníamos en la versión anterior.
@@ -135,7 +134,7 @@ Uno de los puntos fuertes del proyecto del Gestor es que al tenerlo todo bien se
 
 Con el gestor actualizado, volvemos a crear la imagen de Docker como hicimos en la **Parte 1**.
 
-![Imagen17](images/17.png)
+![Imagen17](images/16.png)
 
 Para probar la imagen (y como tengo el [AWS CLI](https://aws.amazon.com/es/cli/) instalado y configurado), le podemos compartir los permisos que tiene nuestro sistema local para que pueda realizar las operaciones en S3 (subir, listar, borrar...):
 ```bash
@@ -147,17 +146,17 @@ En esa orden:
 * **'-v ~/.aws:/root/.aws:ro'**: Montamos la carpeta local de las credenciales de AWS en el contenedor en modo lectura (para pruebas locales).
 * **'-p 5000:5000'**: Vinculamos el puerto 5000 del sistema con el contenedor.
 * **'flask-s3-app:latest'**: Definimos la imagen de Docker que utilizamos.
-![Imagen18](images/18.png)
+![Imagen18](images/17.png)
 Haré una serie de acciones con el bucket para asegurarme de que todo está en correcto funcionamiento.
-![Imagen19](images/19.png)
-![Imagen20](images/20.png)
-![Imagen21](images/21.png)
-![Imagen22](images/22.png)
-![Imagen23](images/23.png)
-![Imagen24](images/24.png)
-![Imagen25](images/25.png)
-![Imagen26](images/26.png)
-![Imagen27](images/27.png)
+![Imagen19](images/18.png)
+![Imagen20](images/19.png)
+![Imagen21](images/20.png)
+![Imagen22](images/21.png)
+![Imagen23](images/22.png)
+![Imagen24](images/23.png)
+![Imagen25](images/24.png)
+![Imagen26](images/25.png)
+![Imagen27](images/26.png)
 
 Como podemos ver en las capturas, ya tenemos el Gestor adaptado para IaC y funcionando correctamente.
 El siguiente paso será alojar esta imagen de Docker en [Amazon ECR](https://aws.amazon.com/es/ecr/) (Elastic Container Registry) para poder desplegarla en una estrategia 100% automatizada en la nube de AWS.
