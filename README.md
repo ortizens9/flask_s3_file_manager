@@ -121,8 +121,8 @@ Ubicados en la raíz del proyecto, generamos la carpeta 'terraform' y entramos e
 
 Después de definir los tres archivos, la estructura queda así:
 ![Imagen12](images/12.png)
-![Imagen13](images/13.png)
-![Imagen14](images/14.png)
+<img src="images/13.png" width="500px" alt="imagen13">
+<img src="images/14.png" width="500px" alt="imagen14">
 ![Imagen15](images/15.png)
 
 He tenido que modificar el código del gestor de S3 para **orientarlo a un usuario final** y no tanto a un administrador root que lo gestiona todo. Así que le he dejado funciones de subir, borrar, listar y actualizar archivos nada más.
