@@ -120,6 +120,7 @@ Ubicados en la raíz del proyecto, generamos la carpeta 'terraform' y entramos e
 ![Imagen11](images/11.png)
 
 Después de definir los tres archivos, la estructura queda así:
+
 ![Imagen12](images/12.png)
 <img src="images/13.png" width="700px" alt="imagen13">
 <img src="images/14.png" width="700px" alt="imagen14">
@@ -167,7 +168,71 @@ El objetivo de hoy es pasar **la imagen de Docker a Amazon ECR** con el fin de d
 
 <img src="images/27.png" width="400px" alt="imagen27">
 
+Lo primero es añadir en el archivo 'main.tf', el nombre del repositorio:Parte 3:
+El objetivo de hoy es pasar la imagen de Docker a Amazon ECR con el fin de desplegar nuestra aplicación en la nube de AWS utilizando IaC de manera automática.
+
+<img src="images/28.png" width="400px" alt="imagen28">
+
 Lo primero es añadir en el archivo 'main.tf', el nombre del repositorio:
+
+<img src="images/29.png" width="700px" alt="imagen29">
+
+Las líneas 'force_delete' y 'scan_on_push':
+* **'force_delete = true'**: Por defecto, AWS protege tus repositorios para que no borres cosas por error si tienen imágenes dentro. Pero en un entorno de aprendizaje o pruebas, si ejecutas terraform destroy sin este parámetro, AWS dará un error feo diciendo **"No se puede borrar ECR porque no está vacío"**. De esta manera, Terraform podrá eliminar el repositorio y todas las imágenes que contenga al ejecutar 'terraform destroy', sin que AWS bloquee el proceso por no estar vacío.
+* **'scan_on_push = true'**: Es una buena práctica para que AWS analice si la imagen de Docker tiene vulnerabilidades conocidas al subirla.
+
+Seguido del output que nos generará el registro ECR al desplegarlo.
+<img src="images/30.png" width="700px" alt="imagen30">
+
+Dejo los enlaces de donde he sacado la información. [A](https://spacelift.io/blog/terraform-ecr) y [B](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_repository).
+
+Después de escribirlo, ejecutamos la instrucción: 'terraform plan'.
+<img src="images/31.png" width="700px" alt="imagen31">
+<img src="images/32.png" width="700px" alt="imagen32">
+
+Es posible que nos encontremos con este error y es que el usuario IAM que utilizamos en la CLI (llamado 'boto3_user') únicamente tenía permisos para el control de S3; así que entramos en nuestra cuenta root de AWS, que es la que tiene la capacidad de gestionar permisos, y le damos a 'boto3_user' permisos totales sobre **ECR**.
+
+<img src="images/33.png" width="700px" alt="imagen33">
+<img src="images/34.png" width="700px" alt="imagen34">
+<img src="images/35.png" width="700px" alt="imagen35">
+
+Ahora volvemos a hacer terraform plan, terraform apply y le decimos que yes.
+Esto nos genera el registro con su URL, que sigue la fórmula:
+```bash
+aws_account_id.dkr.ecr.region.amazonaws.com/my_repository
+```
+Como habíamos descrito en el output del nombre del repositorio.
+
+<img src="images/36.png" width="700px" alt="imagen36">
+
+Una vez creado el registro de la imagen en ECR, solicitaremos un **token temporal** a AWS para dárselo a Docker para que este abra sesión con ECR.
+ECR usa tokens que duran unas 12 horas y la CLI genera una contraseña para ti.
+
+Solicitamos el [token](https://docs.aws.amazon.com/AmazonECR/latest/userguide/registry_auth.html) con:
+```bash
+aws ecr get-login-password --region region | docker login --username AWS --password-stdin aws_account_id.dkr.ecr.region.amazonaws.com
+```
+<img src="images/37.png" width="700px" alt="imagen37">
+<img src="images/38.png" width="700px" alt="imagen38">
+
+Escribimos 'docker images' para conocer el nombre de la imagen. Le ponemos un tag/una etiqueta a nuestra imagen de Docker.
+
+<img src="images/39.png" width="700px" alt="imagen39">
+
+Y subimos finalmente la imagen:
+
+<img src="images/40.png" width="700px" alt="imagen40">
+
+Si hacemos
+```bash
+aws ecr list-images --repository-name flask-s3-file-manager --region eu-west-1
+```
+Veremos que se ha subido correctamente:
+
+<img src="images/41.png" width="700px" alt="imagen41">
+
+En la siguiente parte nos centraremos ya en utilizar esta imagen para lanzarla de forma automática con **ECS** y **Fargate**.
+
 <img src="images/28.png" width="700px" alt="imagen28">
 
 Las líneas 'force_delete' y 'scan_on_push':
@@ -175,15 +240,18 @@ Las líneas 'force_delete' y 'scan_on_push':
 * **'scan_on_push = true'**: Es una buena práctica para que AWS analice si la imagen de Docker tiene vulnerabilidades conocidas al subirla.
 
 Seguido del output que nos generará el registro ECR al desplegarlo.
+
 <img src="images/29.png" width="700px" alt="imagen29">
 
 Dejo los enlaces de donde he sacado la información. [A](https://spacelift.io/blog/terraform-ecr) y [B](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_repository).
 
 Después de escribirlo, ejecutamos la instrucción: 'terraform plan'.
+
 <img src="images/30.png" width="700px" alt="imagen30">
 <img src="images/31.png" width="700px" alt="imagen31">
 
 Es posible que nos encontremos con este error y es que el usuario IAM que utilizamos en la CLI (llamado 'boto3_user') únicamente tenía permisos para el control de S3; así que entramos en nuestra cuenta root de AWS, que es la que tiene la capacidad de gestionar permisos, y le damos a 'boto3_user' permisos totales sobre **ECR**.
+
 <img src="images/32.png" width="700px" alt="imagen32">
 <img src="images/33.png" width="700px" alt="imagen33">
 <img src="images/34.png" width="700px" alt="imagen34">
@@ -208,8 +276,11 @@ aws ecr get-login-password --region region | docker login --username AWS --passw
 <img src="images/37.png" width="700px" alt="imagen37">
 
 Escribimos 'docker images' para conocer el nombre de la imagen. Le ponemos un tag/una etiqueta a nuestra imagen de Docker.
+
 <img src="images/38.png" width="700px" alt="imagen38">
+
 Y subimos finalmente la imagen:
+
 <img src="images/39.png" width="700px" alt="imagen39">
 
 Si hacemos:
@@ -217,6 +288,7 @@ Si hacemos:
 aws ecr list-images --repository-name flask-s3-file-manager --region eu-west-1
 ```
 Veremos que se ha subido correctamente:
+
 <img src="images/40.png" width="700px" alt="imagen40">
 
 En la siguiente parte nos centraremos ya en utilizar esta imagen para lanzarla de forma automática con **ECS** y **Fargate**.
