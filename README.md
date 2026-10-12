@@ -254,7 +254,7 @@ Es posible que nos encontremos con este error y es que el usuario IAM que utiliz
 
 <img src="images/32.png" width="700px" alt="imagen32">
 <img src="images/33.png" width="700px" alt="imagen33">
-<img src="images/35.png" width="700px" alt="imagen35">
+<img src="images/34.png" width="700px" alt="imagen34">
 
 Ahora volvemos a hacer terraform plan, terraform apply y le decimos que yes.
 Esto nos genera el registro con su URL, que sigue la fórmula:
