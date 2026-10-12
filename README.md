@@ -156,7 +156,7 @@ Haré una serie de acciones con el bucket para asegurarme de que todo está en c
 ![Imagen22](images/22.png)
 <img src="images/23.png" width="700px" alt="imagen23">
 ![Imagen24](images/24.png)
-![Imagen25](images/25.png)
+<img src="images/25.png" width="700px" alt="imagen25">
 ![Imagen26](images/26.png)
 
 Como podemos ver en las capturas, ya tenemos el Gestor adaptado para IaC y funcionando correctamente.
