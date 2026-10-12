@@ -167,7 +167,6 @@ Como podemos ver en las capturas, ya tenemos el Gestor adaptado para IaC y funci
 El siguiente paso será alojar esta imagen de Docker en [Amazon ECR](https://aws.amazon.com/es/ecr/) (Elastic Container Registry) para poder desplegarla en una estrategia 100% automatizada en la nube de AWS.
 
 ## Parte 3: Publicación y alojamiento de la imagen de Docker en Amazon ECR
-Parte 3:
 El objetivo de hoy es pasar la imagen de Docker a Amazon ECR con el fin de desplegar nuestra aplicación en la nube de AWS utilizando IaC de manera automática.
 
 <img src="images/27.png" width="400px" alt="imagen27">
@@ -224,7 +223,7 @@ Y subimos finalmente la imagen:
 
 <img src="images/39.png" width="700px" alt="imagen39">
 
-Si hacemos
+Si hacemos:
 ```bash
 aws ecr list-images --repository-name flask-s3-file-manager --region eu-west-1
 ```
