@@ -150,6 +150,7 @@ En esa orden:
 <img src="images/17.png" width="700px" alt="imagen17">
 
 Haré una serie de acciones con el bucket para asegurarme de que todo está en correcto funcionamiento.
+
 <img src="images/18.png" width="700px" alt="imagen18">
 <img src="images/19.png" width="700px" alt="imagen19">
 ![Imagen20](images/20.png)
@@ -248,6 +249,7 @@ Dejo los enlaces de donde he sacado la información. [A](https://spacelift.io/bl
 Después de escribirlo, ejecutamos la instrucción: 'terraform plan'.
 
 <img src="images/30.png" width="700px" alt="imagen30">
+
 <img src="images/31.png" width="700px" alt="imagen31">
 
 Es posible que nos encontremos con este error y es que el usuario IAM que utilizamos en la CLI (llamado 'boto3_user') únicamente tenía permisos para el control de S3; así que entramos en nuestra cuenta root de AWS, que es la que tiene la capacidad de gestionar permisos, y le damos a 'boto3_user' permisos totales sobre **ECR**.
