@@ -149,8 +149,8 @@ En esa orden:
 <img src="images/17.png" width="700px" alt="imagen17">
 
 Haré una serie de acciones con el bucket para asegurarme de que todo está en correcto funcionamiento.
-![Imagen18](images/18.png)
-![Imagen19](images/19.png)
+<img src="images/18.png" width="700px" alt="imagen18">
+<img src="images/19.png" width="700px" alt="imagen19">
 ![Imagen20](images/20.png)
 ![Imagen21](images/21.png)
 ![Imagen22](images/22.png)
