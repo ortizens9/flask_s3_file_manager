@@ -154,7 +154,7 @@ Haré una serie de acciones con el bucket para asegurarme de que todo está en c
 ![Imagen20](images/20.png)
 ![Imagen21](images/21.png)
 ![Imagen22](images/22.png)
-<img src="images/23.png" width="500px" alt="imagen23">
+<img src="images/23.png" width="700px" alt="imagen23">
 ![Imagen24](images/24.png)
 ![Imagen25](images/25.png)
 ![Imagen26](images/26.png)
