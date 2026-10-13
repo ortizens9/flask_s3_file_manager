@@ -39,7 +39,7 @@ aws ec2 describe-network-interfaces --network-interface-ids <ENI_ID> --query "Ne
 
 ## Bitácora de despliegue paso a paso (Índice)
 
-- [Parte 1: Contenedorización de nuestro gestor de S3](#parte-1-contenedorizacion-de-nuestro-gestor-s3)
+- [Parte 1: Contenedorización de nuestro gestor de S3](#parte-1-contenedorizacion-de-nuestro-gestor-de-s3)
 - [Parte 2: Paso del gestor de S3 a IaC con Terraform](#parte-2-paso-del-gestor-de-s3-a-iac-con-terraform)
 - [Parte 3: Publicación y alojamiento de la imagen de Docker en Amazon ECR](#parte-3-publicacion-y-alojamiento-de-la-imagen-de-docker-en-amazon-ecr)
 - [Parte 4: Configuración de IAM y definición de las tareas en ECS](#parte-4-configuracion-de-iam-y-definicion-de-las-tareas-en-ecs)
