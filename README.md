@@ -263,7 +263,7 @@ Esta política definirá qué acciones concretas puede realizar sobre el bucket 
 
 Para ejecutar contenedores en Fargate sin gestionar servidores ni perfiles de instancia EC2, necesitamos definir dos roles diferentes:
 
-* **ecs_task_role** (Rol de tarea), que concede permisos a la aplicación en ejecución. Le dará a nuestro código Flask los permisos para utilizar otros servicios de AWS. Aportará al Gestor (ya en la nube de AWS) los permisos necesarios en el código para poder listar, subir y borrar archivos dentro del bucket de S3. Su funcionamiento es: tu código Flask -> Operaciones en S3.
+* **_'ecs_task_role'_** (Rol de tarea), que concede permisos a la aplicación en ejecución. Le dará a nuestro código Flask los permisos para utilizar otros servicios de AWS. Aportará al Gestor (ya en la nube de AWS) los permisos necesarios en el código para poder listar, subir y borrar archivos dentro del bucket de S3. Su funcionamiento es: tu código Flask -> Operaciones en S3.
 
 Le añadimos una política de confianza (assume_role_policy) al servicio 'ecs-tasks.amazonaws.com'.
 
@@ -273,7 +273,7 @@ En lugar de asignar una política al recurso de forma fija, creamos un 'attachme
 
 <img src="images/46.png" width="700px" alt="imagen46">
 
-* **ecs_execution_role** (Rol de ejecución), este rol le da al agente de Fargate/de ECS permiso a nivel de infraestructura para poder autenticarse en ECS, descargar la imagen de Docker y enviar los logs a CloudWatch (Agente Fargate -> ECR + CloudWatch). Este rol también tiene su política de confianza y en el 'attachment' se le adjunta la política (AmazonECSTaskExecutionRolePolicy) que es administrada por AWS, que permitirá a ECS descargar la imagen desde ECR y enviar los logs a CloudWatch.
+* **_'ecs_execution_role'_** (Rol de ejecución), este rol le da al agente de Fargate/de ECS permiso a nivel de infraestructura para poder autenticarse en ECS, descargar la imagen de Docker y enviar los logs a CloudWatch (Agente Fargate -> ECR + CloudWatch). Este rol también tiene su política de confianza y en el 'attachment' se le adjunta la política (AmazonECSTaskExecutionRolePolicy) que es administrada por AWS, que permitirá a ECS descargar la imagen desde ECR y enviar los logs a CloudWatch.
 
 <img src="images/47.png" width="700px" alt="imagen47">
 
