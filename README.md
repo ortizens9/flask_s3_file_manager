@@ -97,8 +97,6 @@ Aunque haya maneras de editar el archivo _.gitignore_ para no subir estas creden
 Dejo un [enlace](https://docs.docker.com/get-started/docker-concepts/building-images/writing-a-dockerfile/) que me ha servido para crear el Dockerfile.
 
 ## Parte 2: Paso del gestor de S3 a IaC con Terraform
-Parte 2:
-
 En esta segunda parte de la serie nos acercaremos al objetivo, que es **automatizar el despliegue con IaC** (Infraestructura como Código).
 
 <img src="images/08.png" width="400px" alt="imagen08">
