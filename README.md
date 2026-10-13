@@ -291,11 +291,11 @@ Para definir el servicio de ECS es necesario conectarlo a una [VPC](https://docs
 
 <img src="images/49.png" width="400px" alt="imagen49">
 
-Hasta ahora en Terraform hemos usado bloques de 'resource' para crear componentes nuevos. Sin embargo, cuando necesitamos consultar recursos existentes en nuestra cuenta de AWS, utilizamos bloques 'data', que nos permiten importar sus IDs directamente en el código:
+Hasta ahora en Terraform hemos usado bloques de **'resource'** para crear componentes nuevos. Sin embargo, cuando necesitamos consultar recursos existentes en nuestra cuenta de AWS, utilizamos bloques **'data'**, que nos permiten importar sus IDs directamente en el código:
 
 <img src="images/50.png" width="700px" alt="imagen50">
 
-También es necesario crear su Grupo de Seguridad. En él configuraremos: su nombre, la VPC predeterminada a la que se vincula y las reglas de tráfico: En 'ingress' el tráfico entrante por el puerto 5000 y en egress permitimos su salida sin restricciones.
+También es necesario crear su **Grupo de Seguridad**. En él configuraremos: su nombre, la VPC predeterminada a la que se vincula y las reglas de tráfico: En 'ingress' el tráfico entrante por el puerto 5000 y en egress permitimos su salida sin restricciones.
 
 <img src="images/51.png" width="700px" alt="imagen51">
 
@@ -305,7 +305,7 @@ A continuación, crearemos la configuración del servicio '[aws_ecs_service](htt
 
 Seguidamente definiremos la infraestructura, ejecutaremos 'terraform plan'.
 
-Como en cualquier proyecto real en la nube, el despliegue no sale a la primera. Para que veáis que no es llegar y besar el santo, estos fueron los problemas principales que tuvimos que ir resolviendo paso a paso:
+Como en cualquier proyecto real en la nube, el despliegue **no sale a la primera**. Para que veáis que no es llegar y besar el santo, estos fueron los problemas principales que tuvimos que ir resolviendo paso a paso:
 
 <img src="images/53.png" width="700px" alt="imagen53">
 
@@ -323,12 +323,12 @@ Al ejecutar el 'apply', aparecieron **muchos más errores**:
 <img src="images/58.png" width="700px" alt="imagen57">
 <img src="images/59.png" width="700px" alt="imagen58">
 
-Además de los permisos, nos encontramos con algún fallo de escritura de manera continua (como por ejemplo un guión alto que tuve que corregirlo por uno bajo).
+Además de los permisos, nos encontramos con algún **fallo de escritura** de manera continua (como por ejemplo un guión alto que tuve que corregirlo por uno bajo).
 
 <img src="images/60.png" width="700px" alt="imagen59">
 <img src="images/61.png" width="700px" alt="imagen60">
 
-Para solucionarlo, le dimos a 'boto3_user' todos los permisos necesarios: Full Access a ECR, ECS, S3, IAM, mantuvimos el acceso sólo de lectura de la VPC (ya utilizamos los bloques 'data') y creamos una política personalizada de EC2. Una vez asignados los permisos y corregidos los fallos de escritura, por fin pudimos desplegar la infraestructura correctamente!
+Para solucionarlo, le dimos a 'boto3_user' todos los permisos necesarios: Full Access a ECR, ECS, S3, IAM, mantuvimos el acceso sólo de lectura de la VPC (ya utilizamos los bloques 'data') y creamos una política personalizada de EC2. Una vez asignados los permisos y corregidos los fallos de escritura, por fin **pudimos desplegar la infraestructura correctamente**!
 
 <img src="images/62.png" width="700px" alt="imagen61">
 
@@ -347,19 +347,19 @@ El problema era que al haberle asignado la VPC por defecto sin filtrar, ECS esta
 <img src="images/64.png" width="700px" alt="imagen63">
 <img src="images/65.png" width="700px" alt="imagen64">
 
-Una vez aplicado el filtro, ya me proporcionaba una IP pública. Pero al poner en el navegador http://<IP_PROPORCIONADA>:5000, la página se quedaba pensando indefinidamente sin entrar al Gestor.
+Una vez aplicado el filtro, ya me proporcionaba una IP pública. Pero al poner en el navegador 'http://<IP_PROPORCIONADA>:5000', la página se quedaba pensando indefinidamente sin entrar al Gestor.
 Tuve que ajustar dos cosas del código de la aplicación:
 - En (app/main.py):
 
 <img src="images/66.png" width="700px" alt="imagen65">
 
-La aplicación estaba configurada para funcionar de manera local (127.0.0.1), por lo que Flask bloqueaba el tráfico externo. Tuve que cambiarlo para que escuche todas las interfaces (0.0.0.0) por el puerto 5000 y le quité 'debug=True'.
+La aplicación estaba configurada para funcionar de **manera local** (127.0.0.1), por lo que Flask bloqueaba el tráfico externo. Tuve que cambiarlo para que escuche todas las interfaces (0.0.0.0) por el puerto 5000 y le quité 'debug=True'.
 El servidor interno que ejecuta app.run() no sirve para la nube porque está pensado para solamente desarrollo local. En producción necesitamos Gunicorn, un servidor que permite crear diferentes procesos independientes para atender a más usuarios simultáneamente.
 Le añadí Gunicorn al archivo de 'requirements.txt' y actualicé la línea CMD en el Dockerfile.
 
 <img src="images/67.png" width="700px" alt="imagen66">
 
-Una vez aplicados estos cambios, tocó volver a construir la imagen de Docker, subirla a ECR y forzar un nuevo despliegue del servicio:
+Una vez aplicados estos cambios, tocó volver a construir la imagen de Docker, subirla a ECR y forzar un **nuevo despliegue** del servicio:
 ```bash
 aws ecs update-service --cluster flask-app-cluster --service flask-service --force-new-deployment
 ```
@@ -371,10 +371,10 @@ Repetir de nuevo el proceso de las tres órdenes para obtener de nuevo la nueva 
 <img src="images/71.png" width="700px" alt="imagen70">
 <img src="images/72.png" width="700px" alt="imagen71">
 
-Una vez finalizado el proyecto y demostrado que todo funciona correctamente, ejecutamos 'terraform destroy' para eliminar toda la infraestructura y para evitar cobros innecesarios en nuestra cuenta de AWS.
+Una vez finalizado el proyecto y demostrado que todo funciona correctamente, ejecutamos 'terraform destroy' para eliminar toda la infraestructura y para evitar **cobros innecesarios** en nuestra cuenta de AWS.
 
 <img src="images/73.png" width="700px" alt="imagen72">
 
-Y con esto llegamos al final. Hemos pasado de tener una aplicación Flask (el Gestor) en local hasta automatizarla completamente en AWS con Docker, ECR, ECS Fargate y Terraform.
+Y con esto llegamos al final. Hemos pasado de tener una aplicación Flask (el Gestor) en local hasta **automatizarla** completamente en AWS con Docker, ECR, ECS Fargate y Terraform.
 
-¡Espero que este recorrido con sus errores y soluciones os haya sido de gran utilidad para vuestros proyectos propios en la nube!
+¡Espero que este recorrido con sus **errores y soluciones** os haya sido de gran utilidad para vuestros proyectos propios en la nube!
