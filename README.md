@@ -235,4 +235,50 @@ En la siguiente parte nos centraremos ya en utilizar esta imagen para lanzarla d
 
 
 ## Parte 4: Configuración de IAM y definición de las tareas en ECS
+Con la imagen de nuestra aplicación ya subida a ECR, el siguiente paso es preparar la seguridad y la definición de la tarea que se ejecutará en ECS.
+
+<img src="images/41.png" width="400px" alt="imagen41">
+
+Primero creamos una política personalizada de S3 utilizando el AWS Policy Generator. Para que la política gestione correctamente los accesos, separamos en dos 'statements':
+
+<img src="images/42.png" width="700px" alt="imagen42">
+<img src="images/43.png" width="700px" alt="imagen43">
+
+* **Uno sin asterisco** ('arn:aws:s3:::el-bucket') para referirnos al bucket de S3 como un recurso.
+* **Otro con asterisco** ('arn:aws:s3:::el-bucket/*') para referirnos a todos los objetos contenidos dentro del bucket.
+Una vez generada la política, es mejor operativamente pasarla a HCL que es un lenguaje para definir IaC (Infraestructura como Código). JSON y HCL comparten las mismas estructuras de datos (clave-valor, listas, cadenas, números y booleanos). HCL aporta ventajas cuando escribimos código:
+- No se usan comillas en las claves
+- Se utiliza '=' en lugar de ':'
+- No son necesarias las comas al saltar de línea
+- HCL *permite añadir* comentarios al código, algo que JSON no soporta
+
+<img src="images/44.png" width="700px" alt="imagen44">
+
+Esta política definirá qué acciones concretas puede realizar sobre el bucket de S3.
+
+Para ejecutar contenedores en Fargate sin gestionar servidores ni perfiles de instancia EC2, necesitamos definir dos roles diferentes:
+
+* **ecs_task_role** (Rol de tarea), que concede permisos a la aplicación en ejecución. Le dará a nuestro código Flask los permisos para utilizar otros servicios de AWS. Aportará al Gestor (ya en la nube de AWS) los permisos necesarios en el código para poder listar, subir y borrar archivos dentro del bucket de S3. Su funcionamiento es: tu código Flask -> Operaciones en S3.
+
+Le añadimos una política de confianza (assume_role_policy) al servicio 'ecs-tasks.amazonaws.com'.
+
+<img src="images/45.png" width="700px" alt="imagen45">
+
+En lugar de asignar una política al recurso de forma fija, creamos un 'attachment'. Eso nos dará unos puntos a favor: Como son el desacoplamiento y la modularidad: Si en el futuro lo destruimos y lo modificamos, no hace falta volver a desplegar el rol. Además, podemos reutilizar el mismo en otros servicios (como en una función Lambda) y aplicar permisos de forma progresiva, respetando el **principio del mínimo privilegio**.
+
+<img src="images/46.png" width="700px" alt="imagen46">
+
+* **ecs_execution_role** (Rol de ejecución), este rol le da al agente de Fargate/de ECS permiso a nivel de infraestructura para poder autenticarse en ECS, descargar la imagen de Docker y enviar los logs a CloudWatch (Agente Fargate -> ECR + CloudWatch). Este rol también tiene su política de confianza y en el 'attachment' se le adjunta la política (AmazonECSTaskExecutionRolePolicy) que es administrada por AWS, que permitirá a ECS descargar la imagen desde ECR y enviar los logs a CloudWatch.
+
+<img src="images/47.png" width="700px" alt="imagen47">
+
+A continuación definimos la tarea 'aws_ecs_task_definition' dentro de nuestro main.tf:
+* Definimos: La familia de la tarea, el modo de red 'awsvpc', la compatibilidad FARGATE, la CPU y la memoria asignadas
+* Vinculamos el ARN de los roles que hemos creado ('Task Role' y 'Execution Role')
+* Definimos el contenedor indicando la URL dinámica de ECR, la etiqueta :latest y mapeamos el puerto 5000
+
+<img src="images/48.png" width="700px" alt="imagen48">
+
+En la siguiente parte configuraremos la red (VPC, subredes y Grupos de Seguridad), desplegaremos el servicio y resolveremos los problemas reales que surgieron durante la puesta en marcha.
+
 ## Parte 5: Despliegue del servicio en Fargate, redes y resolución de problemas
