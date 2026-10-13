@@ -153,9 +153,9 @@ Haré una serie de acciones con el bucket para asegurarme de que todo está en c
 
 <img src="images/18.png" width="700px" alt="imagen18">
 <img src="images/19.png" width="700px" alt="imagen19">
-![Imagen20](images/20.png)
-![Imagen21](images/21.png)
-![Imagen22](images/22.png)
+<img src="images/20.png" width="700px" alt="imagen20">
+<img src="images/21.png" width="700px" alt="imagen21">
+<img src="images/22.png" width="700px" alt="imagen22">
 <img src="images/23.png" width="700px" alt="imagen23">
 
 ![Imagen24](images/24.png)
