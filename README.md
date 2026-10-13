@@ -284,6 +284,6 @@ A continuación definimos la tarea 'aws_ecs_task_definition' dentro de nuestro m
 
 <img src="images/48.png" width="700px" alt="imagen48">
 
-En la siguiente parte configuraremos la red (VPC, subredes y Grupos de Seguridad), *desplegaremos el servicio y resolveremos los problemas reales* que surgieron durante la puesta en marcha.
+En la siguiente parte configuraremos la red (VPC, subredes y Grupos de Seguridad), **desplegaremos el servicio y resolveremos los problemas reales** que surgieron durante la puesta en marcha.
 
 ## Parte 5: Despliegue del servicio en Fargate, redes y resolución de problemas
