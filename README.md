@@ -250,8 +250,11 @@ Primero creamos una política personalizada de S3 utilizando el AWS Policy Gener
 Una vez generada la política, es mejor operativamente pasarla a HCL que es un lenguaje para definir IaC (Infraestructura como Código). JSON y HCL comparten las mismas estructuras de datos (clave-valor, listas, cadenas, números y booleanos). HCL aporta ventajas cuando escribimos código:
 
 1- No se usan comillas en las claves
+
 2- Se utiliza '=' en lugar de ':'
+
 3- No son necesarias las comas al saltar de línea
+
 4- HCL *permite añadir* comentarios al código, algo que JSON no soporta
 
 <img src="images/44.png" width="700px" alt="imagen44">
