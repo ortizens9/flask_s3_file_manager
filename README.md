@@ -314,22 +314,23 @@ Necesitábamos dar al usuario 'boto3_user' permisos de lectura sobre la red, as�
 <img src="images/54.png" width="700px" alt="imagen54">
 <img src="images/55.png" width="700px" alt="imagen55">
 <img src="images/56.png" width="700px" alt="imagen56">
+<img src="images/57.png" width="700px" alt="imagen57">
 
 Una cosa es cuando hacemos 'terraform plan', que únicamente requiere permisos de lectura para consultar el estado, y otra muy diferente es cuando lanzamos 'terraform apply', que necesita permisos de escritura para crear la infraestructura.
 
 Al ejecutar el 'apply', aparecieron **muchos más errores**:
 
-<img src="images/57.png" width="700px" alt="imagen57">
-<img src="images/58.png" width="700px" alt="imagen58">
+<img src="images/58.png" width="700px" alt="imagen57">
+<img src="images/59.png" width="700px" alt="imagen58">
 
 Además de los permisos, nos encontramos con algún fallo de escritura de manera continua (como por ejemplo un guión alto que tuve que corregirlo por uno bajo).
 
-<img src="images/59.png" width="700px" alt="imagen59">
-<img src="images/60.png" width="700px" alt="imagen60">
+<img src="images/60.png" width="700px" alt="imagen59">
+<img src="images/61.png" width="700px" alt="imagen60">
 
 Para solucionarlo, le dimos a 'boto3_user' todos los permisos necesarios: Full Access a ECR, ECS, S3, IAM, mantuvimos el acceso sólo de lectura de la VPC (ya utilizamos los bloques 'data') y creamos una política personalizada de EC2. Una vez asignados los permisos y corregidos los fallos de escritura, por fin pudimos desplegar la infraestructura correctamente!
 
-<img src="images/61.png" width="700px" alt="imagen61">
+<img src="images/62.png" width="700px" alt="imagen61">
 
 Para ver la IP asignada a nuestra tarea dentro del clúster de ECS, tenemos que tener presente tres instrucciones a la CLI:
 ```bash
@@ -339,24 +340,24 @@ aws ec2 describe-network-interfaces --network-interface-ids <ENI_ID> --query "Ne
 ```
 Al ejecutar la última orden, la CLI devolvió un error:
 
-<img src="images/62.png" width="700px" alt="imagen62">
+<img src="images/63.png" width="700px" alt="imagen62">
 
 El problema era que al haberle asignado la VPC por defecto sin filtrar, ECS estaba lanzando la tarea en una subred privada (las cuales no tenían acceso a Internet ni IP pública asignada). Por tanto, en la plantilla de Terraform tuve que añadir, debajo del bloque 'data' de las subredes, un filtro para asegurarnos de que tan solo mapee las subredes públicas.
 
-<img src="images/63.png" width="700px" alt="imagen63">
-<img src="images/64.png" width="700px" alt="imagen64">
+<img src="images/64.png" width="700px" alt="imagen63">
+<img src="images/65.png" width="700px" alt="imagen64">
 
 Una vez aplicado el filtro, ya me proporcionaba una IP pública. Pero al poner en el navegador http://<IP_PROPORCIONADA>:5000, la página se quedaba pensando indefinidamente sin entrar al Gestor.
 Tuve que ajustar dos cosas del código de la aplicación:
 - En (app/main.py):
 
-<img src="images/65.png" width="700px" alt="imagen65">
+<img src="images/66.png" width="700px" alt="imagen65">
 
 La aplicación estaba configurada para funcionar de manera local (127.0.0.1), por lo que Flask bloqueaba el tráfico externo. Tuve que cambiarlo para que escuche todas las interfaces (0.0.0.0) por el puerto 5000 y le quité 'debug=True'.
 El servidor interno que ejecuta app.run() no sirve para la nube porque está pensado para solamente desarrollo local. En producción necesitamos Gunicorn, un servidor que permite crear diferentes procesos independientes para atender a más usuarios simultáneamente.
 Le añadí Gunicorn al archivo de 'requirements.txt' y actualicé la línea CMD en el Dockerfile.
 
-<img src="images/66.png" width="700px" alt="imagen66">
+<img src="images/67.png" width="700px" alt="imagen66">
 
 Una vez aplicados estos cambios, tocó volver a construir la imagen de Docker, subirla a ECR y forzar un nuevo despliegue del servicio:
 ```bash
@@ -364,15 +365,15 @@ aws ecs update-service --cluster flask-app-cluster --service flask-service --for
 ```
 Repetir de nuevo el proceso de las tres órdenes para obtener de nuevo la nueva IP de la tarea y ¡Por fin! Ya tenemos funcionando todo:
 
-<img src="images/67.png" width="700px" alt="imagen67">
-<img src="images/68.png" width="700px" alt="imagen68">
-<img src="images/69.png" width="700px" alt="imagen69">
-<img src="images/70.png" width="700px" alt="imagen70">
-<img src="images/71.png" width="700px" alt="imagen71">
+<img src="images/68.png" width="700px" alt="imagen67">
+<img src="images/69.png" width="700px" alt="imagen68">
+<img src="images/70.png" width="700px" alt="imagen69">
+<img src="images/71.png" width="700px" alt="imagen70">
+<img src="images/72.png" width="700px" alt="imagen71">
 
 Una vez finalizado el proyecto y demostrado que todo funciona correctamente, ejecutamos 'terraform destroy' para eliminar toda la infraestructura y para evitar cobros innecesarios en nuestra cuenta de AWS.
 
-<img src="images/72.png" width="700px" alt="imagen72">
+<img src="images/73.png" width="700px" alt="imagen72">
 
 Y con esto llegamos al final. Hemos pasado de tener una aplicación Flask (el Gestor) en local hasta automatizarla completamente en AWS con Docker, ECR, ECS Fargate y Terraform.
 
