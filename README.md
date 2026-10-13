@@ -246,7 +246,9 @@ Primero creamos una política personalizada de S3 utilizando el AWS Policy Gener
 
 * **Uno sin asterisco** ('arn:aws:s3:::el-bucket') para referirnos al bucket de S3 como un recurso.
 * **Otro con asterisco** ('arn:aws:s3:::el-bucket/*') para referirnos a todos los objetos contenidos dentro del bucket.
+
 Una vez generada la política, es mejor operativamente pasarla a HCL que es un lenguaje para definir IaC (Infraestructura como Código). JSON y HCL comparten las mismas estructuras de datos (clave-valor, listas, cadenas, números y booleanos). HCL aporta ventajas cuando escribimos código:
+
 - No se usan comillas en las claves
 - Se utiliza '=' en lugar de ':'
 - No son necesarias las comas al saltar de línea
