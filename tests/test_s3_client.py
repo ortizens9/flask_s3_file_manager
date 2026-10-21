@@ -5,7 +5,7 @@ from app.s3_client import S3Client
 
 @pytest.fixture
 def s3_client():
-    with mock_s3():
+    with mock_aws():
         client = S3Client(region_name="eu-west-1")
         client.create_bucket("bucket-prueba")
         yield client
