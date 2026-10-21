@@ -1,5 +1,5 @@
 import pytest
-from moto import mock_s3
+from moto import mock_aws
 from app.s3_client import S3Client
 
 
