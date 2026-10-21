@@ -10,7 +10,7 @@ Esta es la documentación técnica completa del ciclo de vida de migración y au
 ## Arquitectura y tecnologías
 
 
-<img src="images/esquema_proyecto.png" width="700px" alt="estructura">
+<img src="images/esquema_proyecto.png" width="800px" alt="estructura">
 
 * **Backend:** Python, Flask, Gunicorn, 'boto3'.
 * **Contenedores:** Docker, AWS ECR.
@@ -39,11 +39,11 @@ aws ec2 describe-network-interfaces --network-interface-ids <ENI_ID> --query "Ne
 
 ## Bitácora de despliegue paso a paso (Índice)
 
-- [Parte 1: Contenedorización de nuestro gestor de S3](#parte-1-contenedorizacion-de-nuestro-gestor-s3)
+- [Parte 1: Contenedorización de nuestro gestor de S3](#parte-1-contenedorización-de-nuestro-gestor-de-s3)
 - [Parte 2: Paso del gestor de S3 a IaC con Terraform](#parte-2-paso-del-gestor-de-s3-a-iac-con-terraform)
-- [Parte 3: Publicación y alojamiento de la imagen de Docker en Amazon ECR](#parte-3-publicacion-y-alojamiento-de-la-imagen-de-docker-en-amazon-ecr)
-- [Parte 4: Configuración de IAM y definición de las tareas en ECS](#parte-4-configuracion-de-iam-y-definicion-de-las-tareas-en-ecs)
-- [Parte 5: Despliegue del servicio en Fargate, redes y resolución de problemas](#parte-5-despliegue-del-servicio-en-fargate-redes-y-resolucion-de-problemas)
+- [Parte 3: Publicación y alojamiento de la imagen de Docker en Amazon ECR](#parte-3-publicación-y-alojamiento-de-la-imagen-de-docker-en-amazon-ecr)
+- [Parte 4: Configuración de IAM y definición de las tareas en ECS](#parte-4-configuración-de-iam-y-definición-de-las-tareas-en-ecs)
+- [Parte 5: Despliegue del servicio en Fargate, redes y resolución de problemas](#parte-5-despliegue-del-servicio-en-fargate-redes-y-resolución-de-problemas)
 
 ## Limpieza del entorno
 ```bash
@@ -54,11 +54,11 @@ terraform destroy
 ## Parte 1: Contenedorización de nuestro gestor de S3
 Buenas tardes a todos. Después de un tiempo liado con temas de AWS, retomo el blog para rescatar el gestor de S3 con boto3 que creé y que esta vez lo contenedorizaremos (lo convertiremos en un contenedor de Docker).
 
-![Imagen01](images/01.png)
+<img src="images/01.png" width="500px" alt="imagen01">
 
 Como hemos cambiado varias veces de SO me aseguro de que el gestor continua funcionando correctamente. En mi carpeta de Proyectos he clonado desde mi cuenta de Github el [código](https://github.com/ortizens9/flask_s3_file_manager) que escribí.
 
-![Imagen02](images/02.png)
+<img src="images/02.png" width="700px" alt="imagen02">
 
 Activamos el entorno, actualizamos las dependencias con el archivo requirements.txt y la ponemos en marcha con:
 ```bash
@@ -66,23 +66,23 @@ flask run --host=0.0.0.0 --port=5000
 ```
 Nos muestra dos IP, depende desde donde la estemos ejecutando usamos una u otra. En el caso de estar probándola en la misma máquina, usaremos la que dice _127.0.0.1:5000_ (localhost) y si la ejecutamos en un servidor remoto (accediendo vía SSH), accedemos desde el navegador con la IP de la máquina (ej. _192.168.X.X:5000_).
 
-![Imagen03](images/03.png)
+<img src="images/03.png" width="700px" alt="imagen03">
 
 En la imagen muestro la disposición de la estructura interna de la app con su árbol de directorios.
 
-![Imagen04](images/04.png)
+<img src="images/04.png" width="700px" alt="imagen04">
 
 Pasamos a crear el Dockerfile, que es un documento de texto que se utiliza para hacer una imagen de contenedor; hacemos un _nano Dockerfile_. Y el contenido quedaría de la siguiente manera (he dejado comentarios explicando el funcionamiento interno).
 
-![Imagen05](images/05.png)
+<img src="images/05.png" width="700px" alt="imagen05">
 
 Construimos la imagen del contenedor:
 
-![Imagen06](images/06.png)
+<img src="images/06.png" width="700px" alt="imagen06">
 
 Para verificar si se ha creado con éxito escribimos _docker images_. Ahí deberíamos ver la imagen con el nombre _flask-s3-app_. Para poner a prueba el contenedor, arrancamos uno de prueba:
 
-![Imagen07](images/07.png)
+<img src="images/07.png" width="700px" alt="imagen07">
 
 Esta solicitud en el navegador web se puede hacer tanto con _127.0.0.1_ como por _localhost_. Una vez verificado, lo paramos y eliminamos con:
 ```bash
@@ -97,11 +97,9 @@ Aunque haya maneras de editar el archivo _.gitignore_ para no subir estas creden
 Dejo un [enlace](https://docs.docker.com/get-started/docker-concepts/building-images/writing-a-dockerfile/) que me ha servido para crear el Dockerfile.
 
 ## Parte 2: Paso del gestor de S3 a IaC con Terraform
-Parte 2:
-
 En esta segunda parte de la serie nos acercaremos al objetivo, que es **automatizar el despliegue con IaC** (Infraestructura como Código).
 
-![Imagen08](images/08.png)
+<img src="images/08.png" width="400px" alt="imagen08">
 
 Para empezar, instalamos Terraform desde sus [repositorios oficiales](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli
 ).
@@ -120,11 +118,11 @@ Ubicados en la raíz del proyecto, generamos la carpeta 'terraform' y entramos e
 ![Imagen11](images/11.png)
 
 Después de definir los tres archivos, la estructura queda así:
+
 ![Imagen12](images/12.png)
-![Imagen13](images/13.png)
-![Imagen14](images/14.png)
-![Imagen15](images/15.png)
-![Imagen16](images/16.png)
+<img src="images/13.png" width="700px" alt="imagen13">
+<img src="images/14.png" width="700px" alt="imagen14">
+<img src="images/15.png" width="700px" alt="imagen15">
 
 He tenido que modificar el código del gestor de S3 para **orientarlo a un usuario final** y no tanto a un administrador root que lo gestiona todo. Así que le he dejado funciones de subir, borrar, listar y actualizar archivos nada más.
 He adaptado la aplicación al nuevo bucket que hemos creado expresamente con Terraform para este proyecto, llamado 'terraform-file-manager-default-s3bucket-daniel-2026'. He limpiado también la parte de Flask eliminando las rutas de crear y listar buckets que teníamos en la versión anterior.
@@ -135,7 +133,7 @@ Uno de los puntos fuertes del proyecto del Gestor es que al tenerlo todo bien se
 
 Con el gestor actualizado, volvemos a crear la imagen de Docker como hicimos en la **Parte 1**.
 
-![Imagen17](images/17.png)
+![Imagen16](images/16.png)
 
 Para probar la imagen (y como tengo el [AWS CLI](https://aws.amazon.com/es/cli/) instalado y configurado), le podemos compartir los permisos que tiene nuestro sistema local para que pueda realizar las operaciones en S3 (subir, listar, borrar...):
 ```bash
@@ -147,21 +145,234 @@ En esa orden:
 * **'-v ~/.aws:/root/.aws:ro'**: Montamos la carpeta local de las credenciales de AWS en el contenedor en modo lectura (para pruebas locales).
 * **'-p 5000:5000'**: Vinculamos el puerto 5000 del sistema con el contenedor.
 * **'flask-s3-app:latest'**: Definimos la imagen de Docker que utilizamos.
-![Imagen18](images/18.png)
+<img src="images/17.png" width="700px" alt="imagen17">
+
 Haré una serie de acciones con el bucket para asegurarme de que todo está en correcto funcionamiento.
-![Imagen19](images/19.png)
-![Imagen20](images/20.png)
-![Imagen21](images/21.png)
-![Imagen22](images/22.png)
-![Imagen23](images/23.png)
+
+<img src="images/18.png" width="700px" alt="imagen18">
+<img src="images/19.png" width="700px" alt="imagen19">
+<img src="images/20.png" width="700px" alt="imagen20">
+<img src="images/21.png" width="700px" alt="imagen21">
+<img src="images/22.png" width="700px" alt="imagen22">
+<img src="images/23.png" width="700px" alt="imagen23">
+
 ![Imagen24](images/24.png)
-![Imagen25](images/25.png)
+<img src="images/25.png" width="700px" alt="imagen25">
+
 ![Imagen26](images/26.png)
-![Imagen27](images/27.png)
 
 Como podemos ver en las capturas, ya tenemos el Gestor adaptado para IaC y funcionando correctamente.
-El siguiente paso será alojar esta imagen de Docker en [Amazon ECR](https://aws.amazon.com/es/ecr/) (Elastic Container Registry) para poder desplegarla en una estrategia 100% automatizada en la nube de AWS.
+El siguiente paso será alojar esta imagen de Docker en [Amazon ECR](https://aws.amazon.com/es/ecr/) (Elastic Container Registry) **para poder desplegarla en una estrategia 100% automatizada** en la nube de AWS.
 
 ## Parte 3: Publicación y alojamiento de la imagen de Docker en Amazon ECR
+El objetivo de hoy es **pasar la imagen de Docker a Amazon ECR** con el fin de desplegar nuestra aplicación en la nube de AWS utilizando IaC de manera automática.
+
+<img src="images/27.png" width="400px" alt="imagen27">
+
+Lo primero es añadir en el archivo 'main.tf', el nombre del repositorio:
+
+<img src="images/28.png" width="700px" alt="imagen28">
+
+Las líneas 'force_delete' y 'scan_on_push':
+* **'force_delete = true'**: Por defecto, AWS protege tus repositorios para que no borres cosas por error si tienen imágenes dentro. Pero en un entorno de aprendizaje o pruebas, si ejecutas terraform destroy sin este parámetro, AWS dará un error feo diciendo **"No se puede borrar ECR porque no está vacío"**. De esta manera, Terraform podrá eliminar el repositorio y todas las imágenes que contenga al ejecutar 'terraform destroy', sin que AWS bloquee el proceso por no estar vacío.
+* **'scan_on_push = true'**: Es una buena práctica para que AWS analice si la imagen de Docker tiene vulnerabilidades conocidas al subirla.
+
+Seguido del output que nos generará el registro ECR al desplegarlo.
+
+<img src="images/29.png" width="700px" alt="imagen29">
+
+Dejo los enlaces de donde he sacado la información. [A](https://spacelift.io/blog/terraform-ecr) y [B](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_repository).
+
+Después de escribirlo, ejecutamos la instrucción: 'terraform plan'.
+
+<img src="images/30.png" width="700px" alt="imagen30">
+<img src="images/31.png" width="700px" alt="imagen31">
+
+Es posible que nos encontremos con este error y es que el usuario IAM que utilizamos en la CLI (llamado 'boto3_user') únicamente tenía permisos para el control de S3; así que entramos en nuestra cuenta root de AWS, que es la que tiene la capacidad de gestionar permisos, y le damos a 'boto3_user' permisos totales sobre **ECR**.
+
+<img src="images/32.png" width="700px" alt="imagen32">
+<img src="images/33.png" width="700px" alt="imagen33">
+<img src="images/34.png" width="700px" alt="imagen34">
+
+Ahora volvemos a hacer terraform plan, terraform apply y le decimos que yes.
+Esto nos genera el registro con su URL, que sigue la fórmula:
+```bash
+aws_account_id.dkr.ecr.region.amazonaws.com/my_repository
+```
+Como habíamos descrito en el output del nombre del repositorio.
+
+<img src="images/35.png" width="700px" alt="imagen35">
+
+Una vez creado el registro de la imagen en ECR, solicitaremos un **token temporal** a AWS para dárselo a Docker para que este abra sesión con ECR.
+ECR usa tokens que duran unas 12 horas y la CLI genera una contraseña para ti.
+
+Solicitamos el [token](https://docs.aws.amazon.com/AmazonECR/latest/userguide/registry_auth.html) con:
+```bash
+aws ecr get-login-password --region region | docker login --username AWS --password-stdin aws_account_id.dkr.ecr.region.amazonaws.com
+```
+<img src="images/36.png" width="700px" alt="imagen36">
+<img src="images/37.png" width="700px" alt="imagen37">
+
+Escribimos 'docker images' para conocer el nombre de la imagen. Le ponemos un tag/una etiqueta a nuestra imagen de Docker.
+
+<img src="images/38.png" width="700px" alt="imagen38">
+
+Y subimos finalmente la imagen:
+
+<img src="images/39.png" width="700px" alt="imagen39">
+
+Si hacemos:
+```bash
+aws ecr list-images --repository-name flask-s3-file-manager --region eu-west-1
+```
+Veremos que se ha subido correctamente:
+
+<img src="images/40.png" width="700px" alt="imagen40">
+
+En la siguiente parte nos centraremos ya en utilizar esta imagen para lanzarla de forma automática con **ECS** y **Fargate**.
+
+
 ## Parte 4: Configuración de IAM y definición de las tareas en ECS
+Con la imagen de nuestra aplicación ya subida a ECR, el siguiente paso es preparar la seguridad y la definición de la tarea que se ejecutará en ECS.
+
+<img src="images/41.png" width="400px" alt="imagen41">
+
+Primero creamos una política personalizada de S3 utilizando el AWS Policy Generator. Para que la política gestione correctamente los accesos, separamos en dos 'statements':
+
+<img src="images/42.png" width="700px" alt="imagen42">
+<img src="images/43.png" width="700px" alt="imagen43">
+
+* **Uno sin asterisco** ('arn:aws:s3:::el-bucket') para referirnos al bucket de S3 como un recurso.
+* **Otro con asterisco** ('arn:aws:s3:::el-bucket/*') para referirnos a todos los objetos contenidos dentro del bucket.
+
+Una vez generada la política, es mejor operativamente pasarla a HCL que es un lenguaje para definir IaC (Infraestructura como Código). JSON y HCL comparten las mismas estructuras de datos (clave-valor, listas, cadenas, números y booleanos). HCL aporta ventajas cuando escribimos código:
+
+1- No se usan comillas en las claves
+
+2- Se utiliza '=' en lugar de ':'
+
+3- No son necesarias las comas al saltar de línea
+
+4- HCL *permite añadir* comentarios al código, algo que JSON no soporta
+
+<img src="images/44.png" width="700px" alt="imagen44">
+
+Esta política definirá qué acciones concretas puede realizar sobre el bucket de S3.
+
+Para ejecutar contenedores en Fargate sin gestionar servidores ni perfiles de instancia EC2, necesitamos definir dos roles diferentes:
+
+* **_'ecs_task_role'_** (Rol de tarea), que concede permisos a la aplicación en ejecución. Le dará a nuestro código Flask los permisos para utilizar otros servicios de AWS. Aportará al Gestor (ya en la nube de AWS) los permisos necesarios en el código para poder listar, subir y borrar archivos dentro del bucket de S3. Su funcionamiento es: tu código Flask -> Operaciones en S3.
+
+Le añadimos una política de confianza (assume_role_policy) al servicio 'ecs-tasks.amazonaws.com'.
+
+<img src="images/45.png" width="700px" alt="imagen45">
+
+En lugar de asignar una política al recurso de forma fija, creamos un 'attachment'. Eso nos dará unos puntos a favor: Como son el desacoplamiento y la modularidad: Si en el futuro lo destruimos y lo modificamos, no hace falta volver a desplegar el rol. Además, podemos reutilizar el mismo en otros servicios (como en una función Lambda) y aplicar permisos de forma progresiva, respetando el **principio del mínimo privilegio**.
+
+<img src="images/46.png" width="700px" alt="imagen46">
+
+* **_'ecs_execution_role'_** (Rol de ejecución), este rol le da al agente de Fargate/de ECS permiso a nivel de infraestructura para poder autenticarse en ECS, descargar la imagen de Docker y enviar los logs a CloudWatch (Agente Fargate -> ECR + CloudWatch). Este rol también tiene su política de confianza y en el 'attachment' se le adjunta la política (AmazonECSTaskExecutionRolePolicy) que es administrada por AWS, que permitirá a ECS descargar la imagen desde ECR y enviar los logs a CloudWatch.
+
+<img src="images/47.png" width="700px" alt="imagen47">
+
+A continuación definimos la tarea 'aws_ecs_task_definition' dentro de nuestro main.tf:
+* Definimos: La familia de la tarea, el modo de red 'awsvpc', la compatibilidad FARGATE, la CPU y la memoria asignadas
+* Vinculamos el ARN de los roles que hemos creado ('Task Role' y 'Execution Role')
+* Definimos el contenedor indicando la URL dinámica de ECR, la etiqueta :latest y mapeamos el puerto 5000
+
+<img src="images/48.png" width="700px" alt="imagen48">
+
+En la siguiente parte configuraremos la red (VPC, subredes y Grupos de Seguridad), **desplegaremos el servicio y resolveremos los problemas reales** que surgieron durante la puesta en marcha.
+
 ## Parte 5: Despliegue del servicio en Fargate, redes y resolución de problemas
+Para definir el servicio de ECS es necesario conectarlo a una [VPC](https://docs.aws.amazon.com/es_es/vpc/latest/userguide/what-is-amazon-vpc.html) y a sus subredes. Podríamos crear una VPC desde cero configurando sus [tablas de rutas](https://docs.aws.amazon.com/es_es/vpc/latest/userguide/VPC_Route_Tables.html) y un Internet Gateway, pero en nuestra cuenta de AWS ya viene una VPC predeterminada y redes en cada una de las zonas de disponibilidad, que son las que utilizaremos.
+
+<img src="images/49.png" width="400px" alt="imagen49">
+
+Hasta ahora en Terraform hemos usado bloques de **'resource'** para crear componentes nuevos. Sin embargo, cuando necesitamos consultar recursos existentes en nuestra cuenta de AWS, utilizamos bloques **'data'**, que nos permiten importar sus IDs directamente en el código:
+
+<img src="images/50.png" width="700px" alt="imagen50">
+
+También es necesario crear su **Grupo de Seguridad**. En él configuraremos: su nombre, la VPC predeterminada a la que se vincula y las reglas de tráfico: En 'ingress' el tráfico entrante por el puerto 5000 y en egress permitimos su salida sin restricciones.
+
+<img src="images/51.png" width="700px" alt="imagen51">
+
+A continuación, crearemos la configuración del servicio '[aws_ecs_service](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecs_service)':
+
+<img src="images/52.png" width="700px" alt="imagen52">
+
+Seguidamente definiremos la infraestructura, ejecutaremos 'terraform plan'.
+
+Como en cualquier proyecto real en la nube, el despliegue **no sale a la primera**. Para que veáis que no es llegar y besar el santo, estos fueron los problemas principales que tuvimos que ir resolviendo paso a paso:
+
+<img src="images/53.png" width="700px" alt="imagen53">
+
+Necesitábamos dar al usuario 'boto3_user' permisos de lectura sobre la red, así que entramos en la [consola de AWS](https://docs.aws.amazon.com/es_es/awsconsolehelpdocs/latest/gsg/what-is.html) y le asignamos la política ([AmazonVPCReadOnlyAccess](https://docs.aws.amazon.com/es_es/aws-managed-policy/latest/reference/AmazonVPCReadOnlyAccess.html)).
+
+<img src="images/54.png" width="700px" alt="imagen54">
+<img src="images/55.png" width="700px" alt="imagen55">
+<img src="images/56.png" width="700px" alt="imagen56">
+<img src="images/57.png" width="700px" alt="imagen57">
+
+Una cosa es cuando hacemos 'terraform plan', que únicamente requiere permisos de lectura para consultar el estado, y otra muy diferente es cuando lanzamos 'terraform apply', que necesita permisos de escritura para crear la infraestructura.
+
+Al ejecutar el 'apply', aparecieron **muchos más errores**:
+
+<img src="images/58.png" width="700px" alt="imagen57">
+<img src="images/59.png" width="700px" alt="imagen58">
+
+Además de los permisos, nos encontramos con algún **fallo de escritura** de manera continua (como por ejemplo un guión alto que tuve que corregirlo por uno bajo).
+
+<img src="images/60.png" width="700px" alt="imagen59">
+<img src="images/61.png" width="700px" alt="imagen60">
+
+Para solucionarlo, le dimos a 'boto3_user' todos los permisos necesarios: Full Access a ECR, ECS, S3, IAM, mantuvimos el acceso sólo de lectura de la VPC (ya utilizamos los bloques 'data') y creamos una política personalizada de EC2. Una vez asignados los permisos y corregidos los fallos de escritura, por fin **pudimos desplegar la infraestructura correctamente**!
+
+<img src="images/62.png" width="700px" alt="imagen61">
+
+Para ver la IP asignada a nuestra tarea dentro del clúster de ECS, tenemos que tener presente tres instrucciones a la CLI:
+```bash
+aws ecs list-tasks --cluster flask-app-cluster --query "taskArns[0]" --output text
+aws ecs describe-tasks --cluster flask-app-cluster --tasks <TASK_ARN> --query "tasks[0].attachments[0].details[?name=='networkInterfaceId'].value" --output text
+aws ec2 describe-network-interfaces --network-interface-ids <ENI_ID> --query "NetworkInterfaces[0].Association.PublicIp" --output text
+```
+Al ejecutar la última orden, la CLI devolvió un error:
+
+<img src="images/63.png" width="700px" alt="imagen62">
+
+El problema era que al haberle asignado la VPC por defecto sin filtrar, ECS estaba lanzando la tarea en una subred privada (las cuales no tenían acceso a Internet ni IP pública asignada). Por tanto, en la plantilla de Terraform tuve que añadir, debajo del bloque 'data' de las subredes, un filtro para asegurarnos de que tan solo mapee las subredes públicas.
+
+<img src="images/64.png" width="700px" alt="imagen63">
+<img src="images/65.png" width="700px" alt="imagen64">
+
+Una vez aplicado el filtro, ya me proporcionaba una IP pública. Pero al poner en el navegador 'http://<IP_PROPORCIONADA>:5000', la página se quedaba pensando indefinidamente sin entrar al Gestor.
+Tuve que ajustar dos cosas del código de la aplicación:
+- En (app/main.py):
+
+<img src="images/66.png" width="700px" alt="imagen65">
+
+La aplicación estaba configurada para funcionar de **manera local** (127.0.0.1), por lo que Flask bloqueaba el tráfico externo. Tuve que cambiarlo para que escuche todas las interfaces (0.0.0.0) por el puerto 5000 y le quité 'debug=True'.
+El servidor interno que ejecuta app.run() no sirve para la nube porque está pensado para solamente desarrollo local. En producción necesitamos Gunicorn, un servidor que permite crear diferentes procesos independientes para atender a más usuarios simultáneamente.
+Le añadí Gunicorn al archivo de 'requirements.txt' y actualicé la línea CMD en el Dockerfile.
+
+<img src="images/67.png" width="700px" alt="imagen66">
+
+Una vez aplicados estos cambios, tocó volver a construir la imagen de Docker, subirla a ECR y forzar un **nuevo despliegue** del servicio:
+```bash
+aws ecs update-service --cluster flask-app-cluster --service flask-service --force-new-deployment
+```
+Repetir de nuevo el proceso de las tres órdenes para obtener de nuevo la nueva IP de la tarea y ¡Por fin! Ya tenemos funcionando todo:
+
+<img src="images/68.png" width="700px" alt="imagen67">
+<img src="images/69.png" width="700px" alt="imagen68">
+<img src="images/70.png" width="700px" alt="imagen69">
+<img src="images/71.png" width="700px" alt="imagen70">
+<img src="images/72.png" width="700px" alt="imagen71">
+
+Una vez finalizado el proyecto y demostrado que todo funciona correctamente, ejecutamos 'terraform destroy' para eliminar toda la infraestructura y para evitar **cobros innecesarios** en nuestra cuenta de AWS.
+
+<img src="images/73.png" width="700px" alt="imagen72">
+
+Y con esto llegamos al final. Hemos pasado de tener una aplicación Flask (el Gestor) en local hasta **automatizarla** completamente en AWS con Docker, ECR, ECS Fargate y Terraform.
+
+¡Espero que este recorrido con sus **errores y soluciones** os haya sido de gran utilidad para vuestros proyectos propios en la nube!
