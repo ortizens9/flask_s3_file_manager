@@ -16,30 +16,45 @@ jobs:
     steps:
       - name: Un saludo de prueba
         run: echo "Hola desde Github Actions!"
+
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
+
       - name: Instalación de dependencias
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+
       - name: Ejecutar tests
         run: pytest
+
       - name: Autenticación AWS credenciales
         uses: aws-actions/configure-aws-credentials@v4
         with: #Configuramos el secreto como input
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
+
+      - name: Instalar Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform init & apply
+        run: |
+          cd terraform
+          terraform init
+          terraform apply -auto-approve
+
       - name: Inicio sesión ECR
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v2
+
       - name: Construir imagen Docker
         run: |
           docker build -t flask-s3-file-manager .
           docker tag flask-s3-file-manager:latest ${{ steps.ecr-login.outputs.registry }}/flask-s3-file-manager:latest
           docker push ${{ steps.ecr-login.outputs.registry }}/flask-s3-file-manager:latest
-
