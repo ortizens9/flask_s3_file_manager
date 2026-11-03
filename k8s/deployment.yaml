@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: s3-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: s3-manager
+  template:
+    metadata:
+      labels:
+        app: s3-manager
+    spec:
+      containers:
+      - name: s3-manager-container
+        image: s3-manager-k8s:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5000
+        envFrom:
+        - secretRef:
+            name: flask-credenciales

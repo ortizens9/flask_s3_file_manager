@@ -24,3 +24,22 @@ htmlcov/
 #Carpeta uploads para pruebas locales
 uploads/*
 !uploads/.gitignore
+
+# Credenciales minikube
+
+aws-credentials.yaml
+secrets.yaml
+
+# Credenciales y ficheros de entorno adicionales
+.env
+.env.*
+*.key
+*.pem
+kubeconfig*
+helm-secrets/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfstate.backup

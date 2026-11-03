@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flask-s3-config
+data:
+  AWS_REGION: eu-west-1
+  S3_BUCKET_NAME: "terraform-file-manager-default-s3bucket-daniel-2026"
