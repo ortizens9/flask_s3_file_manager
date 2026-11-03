@@ -36,8 +36,11 @@ Me ha quedado claro que **es bastante diferente por mucho que quisiera encontrar
 4. El **secret**: Que guarda **información confidencial** para que Kubernetes la ponga a disposición del contenedor. En el caso que lo he usado yo, además lo complementaré con SSM Parameter Store y external-secret, ya explicaré más adelante el porqué.
 
 Para hacer todo el proceso de despliegue en local necesitamos:
+
 **· Kubectl**, que es la interfaz de comandos de k8s.
+
 **· Minikube**, que es el clúster k8s local donde desplegaremos el Gestor S3
+
 **· Helm**, el gestor de paquetes de k8s.
 
 <img src="images/01.png" width="800px" alt="imagen01">
