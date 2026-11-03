@@ -67,6 +67,7 @@ Como **he dicho** antes en 'configmap.yaml', pondremos la configuración no sens
 <img src="images/19.png" width="700px" alt="imagen19">
 
 **Nota sobre el diseño**: Va a parecer un rodeo innecesario en desarrollo local, pero subimos las credenciales de infraestructura a AWS SSM Parameter Store y a su vez creamos un Secreto local de Kubernetes (acordarse siempre de **no guardar credenciales reales** en archivos YAML versionados ni subirlos a Git)
+
 **¿Para qué?** Para que External Secrets Operator tenga permiso de entrada para conectarse a AWS, descargarse los secretos de la aplicación y crear el secreto definitivo en Kubernetes ('flask-credenciales') que consumirá nuestro **Gestor S3 con boto3**.
 Hago este puente en local desde el primer día para cuando cambiemos hacia el entorno EKS y dejar el terreno listo para migrar limpiamente a **IRSA en la nube** en el futuro, evitando usar credenciales estáticas para el operador. Y ya adaptaremos en su momento a los mecanismos de identidad y permisos de EKS.
 
