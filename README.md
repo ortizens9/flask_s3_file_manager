@@ -19,7 +19,7 @@ Cuando migramos una aplicación como es el Gestor de S3 a EKS, lo primero que te
 - en ECS Fargate: AWS gestiona la infraestructura y tu te ocupas de definir las tareas y los servicios mediante Terraform (Es un servicio gestionado por AWS).
 - en Kubernetes: se usa un estándar de objetos declarativos, que funciona tanto en local como en la nube. Además es portable, un tipo de despliegue que se puede usar en cualquier tipo de nube (con sus pequeñas diferencias entre ellas). Éste usa archivos de tipo YAML.
 
-<img src="images/logo.png" width="400px" alt="minikube">
+<img src="images/logo.png" width="500px" alt="minikube">
 
 He querido enfocarme en desplegar la aplicación de manera local para poder entenderlo, más adelante dedicaré otro día a hacer el despliegue en la nube.
 
@@ -40,7 +40,7 @@ Para hacer todo el proceso de despliegue en local necesitamos:
 · Minikube, que es el clúster k8s local donde desplegaremos el Gestor S3
 · Helm, el gestor de paquetes de k8s.
 
-<img src="images/01.png" width="600px" alt="imagen01">
+<img src="images/01.png" width="700px" alt="imagen01">
 
 Los vamos a ir instalando desde sus repositorios oficiales que los iremos encontrando en sus páginas web respectivas.
 1. [Minikube](https://minikube.sigs.k8s.io/docs/start/?arch=%2Flinux%2Fx86-64%2Fstable%2Fbinary+download)
@@ -51,7 +51,7 @@ Una vez instalado ya podemos poner a funcionar el clúster local con el comando 
 
 ## 2. Seguridad y Gestión de Secretos (AWS SSM + External Secrets Operator)
 
-<img src="images/02.png" width="500px" alt="imagen02">
+<img src="images/02.png" width="700px" alt="imagen02">
 
 Para realizar este proceso voy a instalarle External Secrets Operator. Es un operador de Kubernetes que sincroniza los secretos de sistemas externos como son AWS Secrets Manager, Google Secrets Manager, Azure Key Vault o AWS SSM Parameter Store entre otros. Lo instalamos a través de Helm y sus CRDs correspondientes:
 ```bash
@@ -117,8 +117,8 @@ Construimos nuestra imagen de Docker y le damos un nombre diferente a la que ten
 docker build -t s3-manager-k8s .
 ```
 
-<img src="images/05.png" width="600px" alt="imagen05">
-<img src="images/06.png" width="600px" alt="imagen06">
+<img src="images/05.png" width="800px" alt="imagen05">
+<img src="images/06.png" width="800px" alt="imagen06">
 
 Cargamos la imagen en minikube: minikube image load s3-manager-k8s:latest.
 Ahora necesitamos escribir el deployment donde como he dicho antes aquí configuraremos “qué imagen usar (en local, la de Docker local que creemos y en el caso de la nube, la que subamos y usemos desde ECR), se define cuántas réplicas y los límites de recursos que tendrán.”
