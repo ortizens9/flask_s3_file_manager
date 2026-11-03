@@ -19,7 +19,7 @@ Cuando migramos una aplicación como es el Gestor de S3 a EKS, lo primero que te
 - en ECS Fargate: AWS gestiona la infraestructura y tu te ocupas de definir las tareas y los servicios mediante Terraform (Es un servicio gestionado por AWS).
 - en Kubernetes: se usa un estándar de objetos declarativos, que funciona tanto en local como en la nube. Además es portable, un tipo de despliegue que se puede usar en cualquier tipo de nube (con sus pequeñas diferencias entre ellas). Éste usa archivos de tipo YAML.
 
-<img src="images/logo.png" width="500px" alt="minikube">
+<img src="images/logo.png" width="450px" alt="minikube">
 
 He querido enfocarme en desplegar la aplicación de manera local para poder entenderlo, más adelante dedicaré otro día a hacer el despliegue en la nube.
 
@@ -84,7 +84,7 @@ aws ssm put-parameter \
 ```
 Para que External Secrets Operator pueda acceder a AWS, necesitamos proporcionarle unas credenciales con los permisos necesarios. Para ello, creamos un Secret de Kubernetes llamado credenciales-aws, que contiene AWS_ACCESS_KEY_ID y AWS_SECRET_ACCESS_KEY.
 
-<img src="images/20.png" width="600px" alt="imagen20">
+<img src="images/20.png" width="700px" alt="imagen20">
 
 Inicialmente lo definí mediante un archivo YAML (aws-credentials.yaml), pero durante las pruebas encontré un problema: las credenciales parecían contener algún carácter invisible que impedía la autenticación con AWS. Para solucionarlo, eliminé el Secreto anterior (kubectl delete externalsecret flask-secret) y lo volví a crear desde la terminal:
 ```bash
@@ -95,11 +95,11 @@ kubectl create secret generic credenciales-aws \
 De esta manera regeneramos el Secreto con las credenciales correctas, que después utilizará External Secrets Operator para autenticarse en AWS y consultará los parámetros almacenados en SSM Parameter Store.
 Para configurar la conexión con el servicio de SSM, creamos el archivo secrets.yaml, donde definimos el SecretStore:
 
-<img src="images/17.png" width="500px" alt="imagen17">
+<img src="images/17.png" width="700px" alt="imagen17">
 
 A continuación, creamos external-secrets.yaml, para indicar qué parametros irán de SSM al secreto final de flask-credenciales que utilizará nuestra aplicación:
 
-<img src="images/18.png" width="500px" alt="imagen18">
+<img src="images/18.png" width="700px" alt="imagen18">
 
 Para comprobar el estado de los Pods de ESO: kubectl get pods -n external-secrets.
 Después, aplicamos estos external-secrets a la configuración del Minikube: kubectl apply -f externalsecret.yaml
@@ -123,22 +123,22 @@ docker build -t s3-manager-k8s .
 Cargamos la imagen en minikube: minikube image load s3-manager-k8s:latest.
 Ahora necesitamos escribir el deployment donde como he dicho antes aquí configuraremos “qué imagen usar (en local, la de Docker local que creemos y en el caso de la nube, la que subamos y usemos desde ECR), se define cuántas réplicas y los límites de recursos que tendrán.”
 
-<img src="images/16.png" width="600px" alt="imagen16">
+<img src="images/16.png" width="700px" alt="imagen16">
 
 Recuerdo de nuevo que external-secrets adquiere el acceso a AWS a través de credenciales-aws (el secreto local que permite al operador autenticarse ante AWS) y el Gestor de S3 lo coge de flask-credenciales (es el secreto que ESO genera a partir de los parámetros de SSM y consume la aplicación) que está en externalsecret.yaml. Una vez tenemos preparados los manifiestos y la imagen, aplicamos el Deployment con kubectl apply -f deployment.yaml. Los manifiestos SecretStore y ExternalSecret ya los hemos aplicado anteriormente.
 Para ver si está funcionando correctamente: kubectl get pods
 
-<img src="images/08.png" width="600px" alt="imagen08">
+<img src="images/08.png" width="700px" alt="imagen08">
 
 Puntualizo algo y es que como estoy conectado vía SSH que para poder tener acceso a la aplicación lanzada en el pod, tenemos que exponer el puerto 5000 con kubectl expose deployment s3-manager --port=5000 --target-port=5000 (Este crea un Service llamado s3-manager).
 
-<img src="images/13.png" width="600px" alt="imagen13">
+<img src="images/13.png" width="700px" alt="imagen13">
 
 Lo normal para hacer una conexión SSH es usar: ssh usuario@ip_servidor, como he hecho siempre hasta ahora, pero para la conexión que debemos establecer ahora no nos sirve ya que nos encontramos con un problema, si levantamos la aplicación en el puerto 5000 en el servidor con Ubuntu, esa aplicación vive dentro de la red del servidor y en el caso de poner http://localhost:5000, no funcionará, porque nuestro macOS no tiene ni idea de qué hay en ese puerto del servidor remoto. Nuestra conexión ssh al servidor debe de ser: ssh -L 5000:localhost:5000 nombre_usuario@IP_servidor, este abre la terminal en el servidor remoto como el anterior pero además "construye" un túnel cifrado entre un puerto del macOS y un puerto del servidor, en el comando se lee: -L [puerto_local]:[destino_remoto]:[puerto_remoto], haciendo que todo lo que llegue a mi puerto 5000 de mi ordenador local, se mande a través del túnel y se entregue en el puerto 5000 de ese servidor remoto. Por eso es necesario el -L.
 
 Para poder abrir la aplicación del pod en nuestro navegador: kubectl port-forward svc/s3-manager 5000:5000 (Este establece el reenvío temporal del puerto hacia un Service, en este caso el que hemos creado), es necesario mantener ejecutándose el comando port-forward mientras usamos la aplicación, además de mantener activa la conexión SSH con el túnel. Este salva la distancia en el servidor remoto y lo conecta con el Service del clúster de Minikube.
 
-<img src="images/14.png" width="600px" alt="imagen14">
-<img src="images/15.png" width="600px" alt="imagen15">
+<img src="images/14.png" width="700px" alt="imagen14">
+<img src="images/15.png" width="700px" alt="imagen15">
 
 Abrimos nuestro navegador y ponemos http://localhost:5000 y ya debería ser accesible.
